@@ -55,7 +55,7 @@ block-all-mixed-content;">
 <meta name="x-poe-allow-downloads" content="true">
 <script src="https://puc.poecdn.net/authenticated_preview_page/standard.3ef2c256959faf5a756d.js"></script>
 <meta charset="utf-8">
-<title>Domain Checking</title>
+<title>Poe</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <script src="https://puc.poecdn.net/authenticated_preview_page/disableWebRTC.9710cebe07429a9e8e06.js"></script>
 <script src="https://puc.poecdn.net/authenticated_preview_page/tw.b9024aecac666455e183.js"></script>
@@ -86,12 +86,7 @@ block-all-mixed-content;">
         const [domainSearchLink, setDomainSearchLink] = _react.useState.call(void 0, '');
         const [copiedDomainSearch, setCopiedDomainSearch] = _react.useState.call(void 0, false);
         const [sslInfo, setSslInfo] = _react.useState.call(void 0, null);
-        const apiUrl = window.location.hostname === "localhost"
-    ? "http://localhost:3001"
-    : window.location.origin;
-        console.log("API URL being used:", apiUrl);
 
-        
         // Function to generate SSL search link
         const generateDomainSearchLink = (domain) => {
             if (!domain) return '';
@@ -108,8 +103,7 @@ block-all-mixed-content;">
         // Fetch SSL information from API
         const fetchSSLInfo = async (domain) => {
             try {
-                const response = await fetch(`${apiUrl}/api/ssl-summary/${domain}`);
-
+                const response = await fetch(`http://localhost:3001/api/ssl-summary/${domain}`);
                 const data = await response.json();
                 console.log("SSL API response:", data);
 
@@ -144,8 +138,7 @@ block-all-mixed-content;">
         // Lấy thông tin WHOIS từ proxy server (whois.net.vn)
         const fetchWhoisInfo = async (domain) => {
             try {
-                const response = await fetch(`${apiUrl}/api/whois/${domain}`);
-
+                const response = await fetch(`http://localhost:3001/api/whois/${domain}`);
                 const rawText = await response.text();
                 console.log("WHOIS raw:", rawText);
 
@@ -197,8 +190,7 @@ block-all-mixed-content;">
 
         const fetchHostingInfo = async (domain) => {
             try {
-                const response = await fetch(`${apiUrl}/api/ip/${domain}`);
-
+                const response = await fetch(`http://localhost:3001/api/ip/${domain}`);
                 const data = await response.json();
                 console.log("IP/Hosting raw:", data);
 
