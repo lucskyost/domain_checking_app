@@ -709,7 +709,7 @@ ${caRoot}`;
                                         ),
 
                                         /* SSL Search Link - Hiển thị ngay sau khi phân tích  */
-                                        domainInfo && !isAnalyzing && domainSearchLink && (
+                                        domainSearchLink && (isAnalyzing || domainInfo) && (
                                             _react2.default.createElement('div', { className: "mt-6 bg-white rounded-lg border p-4" },
                                                 _react2.default.createElement('h3', { className: "text-md font-semibold text-gray-800 mb-2" }, "Tìm kiếm SSL đã mua:"),
                                                 _react2.default.createElement('div', { className: "flex gap-2" },
@@ -724,7 +724,7 @@ ${caRoot}`;
                                         ),
 
                                         /* Instructions for Finding Order ID - Hiển thị sau khi phân tích */
-                                        domainInfo && !isAnalyzing && domainSearchLink && (
+                                        domainSearchLink && (isAnalyzing || domainInfo) && (
                                             _react2.default.createElement('div', { className: "mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4" },
                                                 _react2.default.createElement('div', { className: "flex items-start" },
                                                     _react2.default.createElement(_lucidereact.AlertCircle, { className: "w-5 h-5 text-yellow-600 mt-0.5 mr-2 flex-shrink-0" }),
