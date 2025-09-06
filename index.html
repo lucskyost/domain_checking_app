@@ -446,12 +446,12 @@ ${caRoot}`;
             window.open(url, '_blank');
         };
 
-        // Function to calculate renewal date (25 days before expiration)
+        // Function to calculate renewal date (20 days before expiration)
         const calculateRenewalDate = (validTo) => {
             if (!validTo) return '';
             try {
                 const expirationDate = new Date(validTo);
-                const renewalDate = new Date(expirationDate.getTime() - (25 * 24 * 60 * 60 * 1000)); // 25 days before
+                const renewalDate = new Date(expirationDate.getTime() - (20 * 24 * 60 * 60 * 1000)); // 20 days before
                 return renewalDate.toLocaleDateString('vi-VN');
             } catch (err) {
                 return '';
@@ -791,27 +791,6 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                             )
                                         ),
 
-                                        /* SSL Renewal Notice Template - NEW ADDITION */
-                                        sslInfo && sslInfo.exists && sslInfo.days_remaining >= 30 && (
-                                            _react2.default.createElement('div', { className: "mt-6 bg-amber-50 border border-amber-200 rounded-lg p-4" },
-                                                _react2.default.createElement('div', { className: "flex items-center mb-3" },
-                                                    _react2.default.createElement(_lucidereact.Clock, { className: "w-5 h-5 text-amber-600 mr-2" }),
-                                                    _react2.default.createElement('h3', { className: "text-lg font-semibold text-amber-800" }, "Thông báo lịch hẹn gia hạn SSL")
-                                                ),
-                                                _react2.default.createElement('div', { className: "bg-white border border-amber-300 rounded p-3 mb-3" },
-                                                    _react2.default.createElement('p', { className: "text-sm text-amber-800 whitespace-pre-line" },
-                                                        generateSSLRenewalNotice(sslInfo)
-                                                    )
-                                                ),
-                                                _react2.default.createElement('button', {
-                                                    onClick: () => copyToClipboard(generateSSLRenewalNotice(sslInfo), 'sslRenewal'),
-                                                    className: "flex items-center px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-600 transition-colors text-sm"
-                                                },
-                                                    copied.sslRenewal ? _react2.default.createElement(_lucidereact.Check, { className: "w-4 h-4 mr-1" }) : _react2.default.createElement(_lucidereact.Copy, { className: "w-4 h-4 mr-1" }),
-                                                    copied.sslRenewal ? 'Đã copy!' : 'Copy thông báo gia hạn'
-                                                )
-                                            )
-                                        ),
 
                                         /* SSL Search Link - Hiển thị ngay sau khi phân tích  */
                                         domainSearchLink && (isAnalyzing || domainInfo) && (
@@ -843,11 +822,11 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                                 )
                                             )
                                         ),
-
+                                        
                                         /* Response Text - Chỉ hiển thị sau khi phân tích xong */
                                         domainSearchLink && (isAnalyzing || domainInfo) && (
-                                            _react2.default.createElement('div', { className: "mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4" },
-                                                _react2.default.createElement('h3', { className: "text-lg font-semibold text-gray-800 mb-3" }, "Template phản hồi trường hợp Domain, DNS đăng ký nơi khác và trỏ về IP hosting/server nơi khác"),
+                                            _react2.default.createElement('div', { className: "mt-6 bg-purple-50 border border-purple-200 rounded-lg p-4" },
+                                                _react2.default.createElement('h3', { className: "text-lg font-semibold text-gray-800 mb-3" }, "Thông báo trường hợp Domain, DNS đăng ký nơi khác và trỏ về IP hosting/server nơi khác"),
                                                 _react2.default.createElement('textarea', {
                                                     value: getResponseText(domainInfo.registrar, domainInfo.hosting, domainInfo.nameservers),
                                                     readOnly: true,
@@ -855,13 +834,37 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                                 }),
                                                 _react2.default.createElement('button', {
                                                     onClick: () => copyToClipboard(getResponseText(domainInfo.registrar, domainInfo.hosting, domainInfo.nameservers), 'response'),
-                                                    className: "mt-2 flex items-center px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors"
+                                                    className: "mt-2 flex items-center px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors"
                                                 },
                                                     copied.response ? _react2.default.createElement(_lucidereact.Check, { className: "w-4 h-4 mr-1" }) : _react2.default.createElement(_lucidereact.Copy, { className: "w-4 h-4 mr-1" }),
                                                     copied.response ? 'Đã copy!' : 'Copy text'
                                                 )
                                             )
                                         ),
+
+
+                                        /* SSL Renewal Notice Template - NEW ADDITION */
+                                        sslInfo && sslInfo.exists && sslInfo.days_remaining >= 30 && (
+                                            _react2.default.createElement('div', { className: "mt-6 bg-teal-50 border border-teal-200 rounded-lg p-4" },
+                                                _react2.default.createElement('div', { className: "flex items-center mb-3" },
+                                                    _react2.default.createElement(_lucidereact.Clock, { className: "w-5 h-5 text-teal-600 mr-2" }),
+                                                    _react2.default.createElement('h3', { className: "text-lg font-semibold text-teal-800" }, "Thông báo lịch hẹn gia hạn SSL")
+                                                ),
+                                                _react2.default.createElement('div', { className: "bg-white border border-teal-300 rounded p-3 mb-3" },
+                                                    _react2.default.createElement('p', { className: "text-sm text-teal-800 whitespace-pre-line" },
+                                                        generateSSLRenewalNotice(sslInfo)
+                                                    )
+                                                ),
+                                                _react2.default.createElement('button', {
+                                                    onClick: () => copyToClipboard(generateSSLRenewalNotice(sslInfo), 'sslRenewal'),
+                                                    className: "flex items-center px-4 py-2 bg-teal-500 text-white rounded hover:bg-teal-600 transition-colors text-sm"
+                                                },
+                                                    copied.sslRenewal ? _react2.default.createElement(_lucidereact.Check, { className: "w-4 h-4 mr-1" }) : _react2.default.createElement(_lucidereact.Copy, { className: "w-4 h-4 mr-1" }),
+                                                    copied.sslRenewal ? 'Đã copy!' : 'Copy text'
+                                                )
+                                            )
+                                        ),
+
 
                                         /* SSL Request Link Input - Only for PA domain + hosting */
                                         domainInfo && domainInfo.registrar === 'P.A. Viet Nam Company Limited' && 
