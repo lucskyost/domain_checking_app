@@ -1,4 +1,4 @@
-<!DOCTYPE html><html><head><meta name="x-poe-datastore-behavior" content="local_only"><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;"><meta name="x-poe-datastore-behavior" content="local_only"><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+<!DOCTYPE html><html><head><meta name="x-poe-datastore-behavior" content="local_only"><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;"><meta name="x-poe-datastore-behavior" content="local_only"><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;"><meta name="x-poe-datastore-behavior" content="local_only"><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
 
 <meta name="x-poe-datastore-behavior" content="local_only">
 <meta http-equiv="Content-Security-Policy" content="
@@ -446,6 +446,43 @@ ${caRoot}`;
             window.open(url, '_blank');
         };
 
+        // Function to calculate renewal date (25 days before expiration)
+        const calculateRenewalDate = (validTo) => {
+            if (!validTo) return '';
+            try {
+                const expirationDate = new Date(validTo);
+                const renewalDate = new Date(expirationDate.getTime() - (25 * 24 * 60 * 60 * 1000)); // 25 days before
+                return renewalDate.toLocaleDateString('vi-VN');
+            } catch (err) {
+                return '';
+            }
+        };
+
+        // Function to format SSL expiration date
+        const formatSSLDate = (dateString) => {
+            if (!dateString) return '';
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('vi-VN');
+            } catch (err) {
+                return dateString;
+            }
+        };
+
+        // Function to generate SSL renewal notice template
+        const generateSSLRenewalNotice = (sslInfo) => {
+            if (!sslInfo || !sslInfo.exists || sslInfo.days_remaining < 30) return '';
+            
+            const expirationDate = formatSSLDate(sslInfo.valid_to);
+            const renewalDate = calculateRenewalDate(sslInfo.valid_to);
+            
+            return `Hiện tại dịch vụ SSL của Quý khách có thời hạn đến ${expirationDate}.
+
+Theo quy định từ phía SSL, việc gia hạn chỉ có thể thực hiện khi chứng chỉ còn thời hạn dưới 30 ngày, để được cộng dồn ngày sử dụng trước đó.
+
+Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý khách khi thời hạn dưới 30 ngày, dự kiến vào khoảng ${renewalDate}.`;
+        };
+
         return (
             _react2.default.createElement('div', { className: "min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4" },
                 _react2.default.createElement('div', { className: "max-w-6xl mx-auto" },
@@ -750,6 +787,28 @@ ${caRoot}`;
                                                             _react2.default.createElement('span', { className: "pulse-fast" }, "Đang kiểm tra SSL...")
                                                         )
                                                     )
+                                                )
+                                            )
+                                        ),
+
+                                        /* SSL Renewal Notice Template - NEW ADDITION */
+                                        sslInfo && sslInfo.exists && sslInfo.days_remaining >= 30 && (
+                                            _react2.default.createElement('div', { className: "mt-6 bg-amber-50 border border-amber-200 rounded-lg p-4" },
+                                                _react2.default.createElement('div', { className: "flex items-center mb-3" },
+                                                    _react2.default.createElement(_lucidereact.Clock, { className: "w-5 h-5 text-amber-600 mr-2" }),
+                                                    _react2.default.createElement('h3', { className: "text-lg font-semibold text-amber-800" }, "Thông báo lịch hẹn gia hạn SSL")
+                                                ),
+                                                _react2.default.createElement('div', { className: "bg-white border border-amber-300 rounded p-3 mb-3" },
+                                                    _react2.default.createElement('p', { className: "text-sm text-amber-800 whitespace-pre-line" },
+                                                        generateSSLRenewalNotice(sslInfo)
+                                                    )
+                                                ),
+                                                _react2.default.createElement('button', {
+                                                    onClick: () => copyToClipboard(generateSSLRenewalNotice(sslInfo), 'sslRenewal'),
+                                                    className: "flex items-center px-4 py-2 bg-amber-500 text-white rounded hover:bg-amber-600 transition-colors text-sm"
+                                                },
+                                                    copied.sslRenewal ? _react2.default.createElement(_lucidereact.Check, { className: "w-4 h-4 mr-1" }) : _react2.default.createElement(_lucidereact.Copy, { className: "w-4 h-4 mr-1" }),
+                                                    copied.sslRenewal ? 'Đã copy!' : 'Copy thông báo gia hạn'
                                                 )
                                             )
                                         ),
@@ -1078,9 +1137,10 @@ ${caRoot}`;
     }
 </script>
 <script src="https://puc.poecdn.net/authenticated_preview_page/syncedState.bd4eeeb8e8e02052ee92.js"></script>
-<script src="https://puc.poecdn.net/authenticated_preview_page/syncedState.bd4eeeb8e8e02052ee92.js"></script><script src="https://puc.poecdn.net/authenticated_preview_page/syncedState.bd4eeeb8e8e02052ee92.js"></script></head>
+<script src="https://puc.poecdn.net/authenticated_preview_page/syncedState.bd4eeeb8e8e02052ee92.js"></script><script src="https://puc.poecdn.net/authenticated_preview_page/syncedState.bd4eeeb8e8e02052ee92.js"></script><script src="https://puc.poecdn.net/authenticated_preview_page/syncedState.bd4eeeb8e8e02052ee92.js"></script></head>
 <body>
 <div id="preview-app"></div>
+
 
 
 
