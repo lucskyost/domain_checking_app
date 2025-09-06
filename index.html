@@ -824,23 +824,23 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                         ),
                                         /* Domain/DNS Notice Template - NEW ADDITION */
                                         domainSearchLink && (isAnalyzing || domainInfo) && (
-                                            _react2.default.createElement('div', { className: "mt-6 bg-purple-100 border border-purple-300 rounded-lg p-4" },
+                                            _react2.default.createElement('div', { className: "mt-6 bg-purple-50 border border-purple-200 rounded-lg p-4" },
                                                 _react2.default.createElement('div', { className: "flex items-center mb-3" },
-                                                    _react2.default.createElement(_lucidereact.Info, { className: "w-5 h-5 text-purple-400 mr-2" }),
-                                                    _react2.default.createElement('h3', { className: "text-lg font-semibold text-purple-600" }, 
+                                                    _react2.default.createElement(_lucidereact.Info, { className: "w-5 h-5 text-purple-500 mr-2" }),
+                                                    _react2.default.createElement('h3', { className: "text-lg font-semibold text-purple-700" }, 
                                                         "Thông báo Domain/DNS trỏ IP hosting khác"
                                                     )
                                                 ),
-                                                _react2.default.createElement('div', { className: "bg-white border border-purple-300 rounded p-3 mb-3" },
+                                                _react2.default.createElement('div', { className: "bg-white border border-purple-200 rounded p-3 mb-3" },
                                                     _react2.default.createElement('textarea', {
                                                         value: getResponseText(domainInfo.registrar, domainInfo.hosting, domainInfo.nameservers),
                                                         readOnly: true,
-                                                        className: "w-full h-40 p-3 border border-purple-300 rounded text-sm resize-none bg-purple-100 text-purple-600"
+                                                        className: "w-full h-40 p-3 border border-purple-200 rounded text-sm resize-none bg-purple-50 text-purple-700"
                                                     })
                                                 ),
                                                 _react2.default.createElement('button', {
                                                     onClick: () => copyToClipboard(getResponseText(domainInfo.registrar, domainInfo.hosting, domainInfo.nameservers), 'response'),
-                                                    className: "flex items-center px-4 py-2 bg-purple-300 text-white rounded hover:bg-purple-400 transition-colors text-sm"
+                                                    className: "flex items-center px-4 py-2 bg-purple-400 text-white rounded hover:bg-purple-500 transition-colors text-sm"
                                                 },
                                                     copied.response 
                                                         ? _react2.default.createElement(_lucidereact.Check, { className: "w-4 h-4 mr-1" }) 
@@ -852,19 +852,19 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
 
                                         /* SSL Renewal Notice Template - NEW ADDITION */
                                         sslInfo && sslInfo.exists && sslInfo.days_remaining >= 30 && (
-                                            _react2.default.createElement('div', { className: "mt-6 bg-teal-100 border border-teal-300 rounded-lg p-4" },
+                                            _react2.default.createElement('div', { className: "mt-6 bg-teal-50 border border-teal-200 rounded-lg p-4" },
                                                 _react2.default.createElement('div', { className: "flex items-center mb-3" },
-                                                    _react2.default.createElement(_lucidereact.Clock, { className: "w-5 h-5 text-teal-500 mr-2" }),
-                                                    _react2.default.createElement('h3', { className: "text-lg font-semibold text-teal-700" }, "Thông báo lịch hẹn gia hạn SSL")
+                                                    _react2.default.createElement(_lucidereact.Clock, { className: "w-5 h-5 text-teal-600 mr-2" }),
+                                                    _react2.default.createElement('h3', { className: "text-lg font-semibold text-teal-800" }, "Thông báo lịch hẹn gia hạn SSL")
                                                 ),
                                                 _react2.default.createElement('div', { className: "bg-white border border-teal-300 rounded p-3 mb-3" },
-                                                    _react2.default.createElement('p', { className: "text-sm text-teal-700 whitespace-pre-line" },
+                                                    _react2.default.createElement('p', { className: "text-sm text-teal-800 whitespace-pre-line" },
                                                         generateSSLRenewalNotice(sslInfo)
                                                     )
                                                 ),
                                                 _react2.default.createElement('button', {
                                                     onClick: () => copyToClipboard(generateSSLRenewalNotice(sslInfo), 'sslRenewal'),
-                                                    className: "flex items-center px-4 py-2 bg-teal-400 text-white rounded hover:bg-teal-500 transition-colors text-sm"
+                                                    className: "flex items-center px-4 py-2 bg-teal-500 text-white rounded hover:bg-teal-600 transition-colors text-sm"
                                                 },
                                                     copied.sslRenewal ? _react2.default.createElement(_lucidereact.Check, { className: "w-4 h-4 mr-1" }) : _react2.default.createElement(_lucidereact.Copy, { className: "w-4 h-4 mr-1" }),
                                                     copied.sslRenewal ? 'Đã copy!' : 'Copy text'
