@@ -68,7 +68,7 @@ block-all-mixed-content;">
             // Xóa http://, https://, www. và trailing slash
             let cleaned = input.trim()
                 .replace(/^https?:\/\//, '')
-                .replace(/^www\./, '')
+                // .replace(/^www\./, '')
                 .replace(/\/$/, '');
                 
             // Nếu có path sau domain, chỉ lấy phần domain
