@@ -205,7 +205,9 @@ block-all-mixed-content;">
                 const expiredDate =
                     getMatch(/Expired Date\s*:\s*(.+)/i) ||
                     getMatch(/Registry Expiry Date\s*:\s*(.+)/i);
-
+                // Chuẩn hóa chỉ còn YYYY-MM-DD
+                issueDate = formatDateShort(issueDate);
+                expiredDate = formatDateShort(expiredDate);
                 // Lấy Nameservers
                 let nameservers = [];
                 const nsMatches = cleanText.match(/Name Server:\s*(.+)/gi);
