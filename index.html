@@ -110,20 +110,20 @@ block-all-mixed-content;">
         const formatDate = (dateString) => {
             if (!dateString) return '';
             try {
-                // Nếu có T...Z thì cắt trước T
-                if (dateString.includes('T')) {
-                dateString = dateString.split('T')[0];
-                }
                 const date = new Date(dateString);
-                const year = date.getUTCFullYear();
-                const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-                const day = String(date.getUTCDate()).padStart(2, '0');
-                return `${year}-${month}-${day}`; // YYYY-MM-DD
-            } catch {
-                return dateString;
+                return date.toLocaleString('vi-VN', { 
+                    timeZone: 'UTC',   // luôn dùng giờ UTC
+                    year: 'numeric', 
+                    month: '2-digit', 
+                    day: '2-digit', 
+                    hour: '2-digit', 
+                    minute: '2-digit', 
+                    second: '2-digit'
+                });
+            } catch (err) {
+                return dateString; // Giữ nguyên nếu không parse được
             }
         };
-
 
         // Fetch SSL information từ API (không đổi)
         const fetchSSLInfo = async (domain) => {
@@ -205,8 +205,7 @@ block-all-mixed-content;">
                 const expiredDate =
                     getMatch(/Expired Date\s*:\s*(.+)/i) ||
                     getMatch(/Registry Expiry Date\s*:\s*(.+)/i);
-                issueDate = formatDate(issueDate);
-                expiredDate = formatDate(expiredDate);
+
                 // Lấy Nameservers
                 let nameservers = [];
                 const nsMatches = cleanText.match(/Name Server:\s*(.+)/gi);
