@@ -680,15 +680,13 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                                 _react2.default.createElement('div', { className: "grid md:grid-cols-2 gap-4 text-sm" },
                                                     // Domain với nút truy cập website
                                                     _react2.default.createElement('div', null,
-                                                        _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Domain:"),
-                                                        _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, domainInfo.domain || 'N/A'),
-                                                        _react2.default.createElement('button', {
-                                                            onClick: () => openLink(`https://${domainInfo.domain}`),
-                                                            className: "ml-2 flex items-center px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors text-xs"
-                                                        },
-                                                            _react2.default.createElement(_lucidereact.ExternalLink, { className: "w-3 h-3 mr-1" }),
-                                                            "Truy cập Website"
-                                                        )
+                                                    _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Domain:"),
+                                                    _react2.default.createElement('a', {
+                                                        href: `https://${domainInfo.domain}`,
+                                                        target: "_blank",
+                                                        rel: "noopener noreferrer",
+                                                        className: "ml-2 text-blue-600 hover:underline"
+                                                    }, domainInfo.domain || 'N/A')
                                                     ),
                                                     // IP
                                                     _react2.default.createElement('div', null,
@@ -762,14 +760,14 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                                         // Ngày đăng ký (dưới status)
                                                         domainInfo.issueDate && (
                                                             _react2.default.createElement('div', { className: "flex items-center text-sm" },
-                                                                _react2.default.createElement('span', { className: "font-medium text-gray-600 w-32" }, "Ngày đăng ký:"),
+                                                                _react2.default.createElement('span', { className: "font-medium text-gray-600 w-32" }, "Creation Date:"),
                                                                 _react2.default.createElement('span', { className: "text-gray-800" }, formatDate(domainInfo.issueDate))
                                                             )
                                                         ),
                                                         // Ngày hết hạn (dưới ngày đăng ký)
                                                         domainInfo.expiredDate && (
                                                             _react2.default.createElement('div', { className: "flex items-center text-sm" },
-                                                                _react2.default.createElement('span', { className: "font-medium text-gray-600 w-32" }, "Ngày hết hạn:"),
+                                                                _react2.default.createElement('span', { className: "font-medium text-gray-600 w-32" }, "Registry Expiry Date:"),
                                                                 _react2.default.createElement('span', { className: "text-gray-800" }, formatDate(domainInfo.expiredDate))
                                                             )
                                                         )
