@@ -108,16 +108,20 @@ block-all-mixed-content;">
 
         // Function to format date (mới thêm để định dạng ngày tháng dễ đọc)
         const formatDate = (dateString) => {
-            if (!dateString) return '';
-            try {
-                const date = new Date(dateString);
-                const year = date.getUTCFullYear();
-                const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-                const day = String(date.getUTCDate()).padStart(2, '0');
-                return `${year}-${month}-${day}`;  // YYYY-MM-DD
-            } catch (err) {
-                return dateString; // Giữ nguyên nếu không parse được
+        if (!dateString) return '';
+        try {
+            // Nếu có T...Z thì cắt trước T
+            if (dateString.includes('T')) {
+            dateString = dateString.split('T')[0];
             }
+            const date = new Date(dateString);
+            const year = date.getUTCFullYear();
+            const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+            const day = String(date.getUTCDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`; // YYYY-MM-DD
+        } catch {
+            return dateString;
+        }
         };
 
 
