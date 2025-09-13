@@ -146,7 +146,8 @@ block-all-mixed-content;">
                     ip: data.ip,
                     issued_to: data.issued_to,
                     issued_org: data.issued_org,
-                    issuer: data.issuer,
+                    issuer_org: data.issuer_org,
+                    issuer_cn: data.issuer_cn,
                     valid_from: data.valid_from,
                     valid_to: data.valid_to,
                     days_remaining: data.days_remaining,
@@ -813,16 +814,20 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                                                     )
                                                                 ),
                                                                 _react2.default.createElement('div', null,
-                                                                    _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Issued To:"),
+                                                                    _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Issued To CN:"),
                                                                     _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, sslInfo.issued_to || 'N/A')
                                                                 ),
                                                                 _react2.default.createElement('div', null,
-                                                                    _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Organization:"),
+                                                                    _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Issued Organization:"),
                                                                     _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, sslInfo.issued_org || 'N/A')
                                                                 ),
                                                                 _react2.default.createElement('div', null,
-                                                                    _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Issuer:"),
-                                                                    _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, sslInfo.issuer || 'N/A')
+                                                                    _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Issuer By CN:"),
+                                                                    _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, sslInfo.issuer_cn || 'N/A')
+                                                                ),
+                                                                _react2.default.createElement('div', null,
+                                                                    _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Issuer Organization:"),
+                                                                    _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, sslInfo.issuer_org || 'N/A')
                                                                 ),
                                                                 _react2.default.createElement('div', null,
                                                                     _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "SSL IP:"),
