@@ -84,7 +84,7 @@ block-all-mixed-content;">
         const generateDomainSearchLink = (domain) => {
             if (!domain) return '';
             const cleanDomain = cleanDomainInput(domain);
-            return `https://support.pavietnam.vn/index.php?pa=hangdoissl&domain=${cleanDomain}&from_date=2024-01-01&to_date=2030-12-31`;
+            return `https://support.pavietnam.vn/index.php?pa=hangdoissl&domain=${cleanDomain}`;
         };
 
         // Handle domain input change với auto-clean
@@ -111,19 +111,17 @@ block-all-mixed-content;">
             if (!dateString) return '';
             try {
                 const date = new Date(dateString);
-                return date.toLocaleString('vi-VN', { 
-                    timeZone: 'UTC',   // luôn dùng giờ UTC
-                    year: 'numeric', 
-                    month: '2-digit', 
-                    day: '2-digit', 
-                    hour: '2-digit', 
-                    minute: '2-digit', 
-                    second: '2-digit'
-                });
+                return date.toLocaleDateString('vi-VN', {
+                    timeZone: 'UTC',
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                }).replace(/-/g, '/'); // đảm bảo format yyyy/mm/dd
             } catch (err) {
-                return dateString; // Giữ nguyên nếu không parse được
+                return dateString;
             }
         };
+
 
         // Fetch SSL information từ API (không đổi)
         const fetchSSLInfo = async (domain) => {
@@ -744,11 +742,11 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                                                 )
                                                         )
                                                     ),
-                                                    // Status với highlight đỏ nếu có clientHold, và ngày đăng ký/hết hạn dưới nó
-                                                    _react2.default.createElement('div', { className: "md:col-span-2" }, // Span 2 cột để chứa các trường con
-                                                        _react2.default.createElement('span', { className: "font-medium text-gray-600 block mb-1" }, "Status:"),
+                                                    // Status với highlight đỏ nếu có clientHold
+                                                    _react2.default.createElement('div', null,
+                                                        _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Status:"),
                                                         _react2.default.createElement('span', { 
-                                                            className: `block mb-1 ${domainInfo.status && domainInfo.status.toLowerCase().includes('clienthold') ? 'text-red-600 font-semibold' : 'text-gray-800'}` 
+                                                            className: `ml-2 ${domainInfo.status && domainInfo.status.toLowerCase().includes('clienthold') ? 'text-red-600 font-semibold' : 'text-gray-800'}` 
                                                         }, 
                                                             domainInfo.status ? domainInfo.status : 
                                                                 (analysisProgress.whois.loading ? 
@@ -757,20 +755,22 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                                                         "Đang tải..."
                                                                     ) : 'N/A'
                                                                 )
-                                                        ),
-                                                        // Ngày đăng ký (dưới status)
-                                                        domainInfo.issueDate && (
-                                                            _react2.default.createElement('div', { className: "flex items-center text-sm" },
-                                                                _react2.default.createElement('span', { className: "font-medium text-gray-600 w-32" }, "Creation Date:"),
-                                                                _react2.default.createElement('span', { className: "text-gray-800" }, formatDate(domainInfo.issueDate))
-                                                            )
-                                                        ),
-                                                        // Ngày hết hạn (dưới ngày đăng ký)
-                                                        domainInfo.expiredDate && (
-                                                            _react2.default.createElement('div', { className: "flex items-center text-sm" },
-                                                                _react2.default.createElement('span', { className: "font-medium text-gray-600 w-32" }, "Registry Expiry Date:"),
-                                                                _react2.default.createElement('span', { className: "text-gray-800" }, formatDate(domainInfo.expiredDate))
-                                                            )
+                                                        )
+                                                    ),
+
+                                                    // Creation Date
+                                                    domainInfo.issueDate && (
+                                                        _react2.default.createElement('div', null,
+                                                            _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Creation Date:"),
+                                                            _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, formatDate(domainInfo.issueDate))
+                                                        )
+                                                    ),
+
+                                                    // Expiry Date
+                                                    domainInfo.expiredDate && (
+                                                        _react2.default.createElement('div', null,
+                                                            _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Registry Expiry Date:"),
+                                                            _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, formatDate(domainInfo.expiredDate))
                                                         )
                                                     ),
                                                     // Country (dưới ngày hết hạn)
@@ -818,7 +818,7 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                                                     _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, sslInfo.issued_to || 'N/A')
                                                                 ),
                                                                 _react2.default.createElement('div', null,
-                                                                    _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Issued Organization:"),
+                                                                    _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Issued Org:"),
                                                                     _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, sslInfo.issued_org || 'N/A')
                                                                 ),
                                                                 _react2.default.createElement('div', null,
@@ -826,7 +826,7 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                                                     _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, sslInfo.issuer_cn || 'N/A')
                                                                 ),
                                                                 _react2.default.createElement('div', null,
-                                                                    _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Issuer Organization:"),
+                                                                    _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Issuer Org:"),
                                                                     _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, sslInfo.issuer_org || 'N/A')
                                                                 ),
                                                                 _react2.default.createElement('div', null,
