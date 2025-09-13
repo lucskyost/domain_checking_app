@@ -47,7 +47,8 @@ app.get('/api/ssl-summary/:domain', async (req, res) => {
             ip: result.resolved_ip,
             issued_to: result.issued_to,
             issued_org: result.issued_o,
-            issuer: result.issuer_o,
+            issuer_org: result.issuer_o,
+            issuer_cn: result.issuer_cn,
             valid_from: result.valid_from,
             valid_to: result.valid_till,
             days_remaining: result.days_left,
@@ -60,5 +61,5 @@ app.get('/api/ssl-summary/:domain', async (req, res) => {
 
 // Start server
 app.listen(3001, () => {
-    console.log('✅ Proxy server running at http://localhost:3001');
+    console.log('✓ Proxy server running at http://localhost:3001');
 });
