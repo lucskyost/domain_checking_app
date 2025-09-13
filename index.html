@@ -1,5 +1,45 @@
-<!DOCTYPE html><html><head><meta name="x-poe-datastore-behavior" content="local_only"><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;"><meta name="x-poe-datastore-behavior" content="local_only"><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;"><meta name="x-poe-datastore-behavior" content="local_only"><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
 
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html>
+<head>
 <meta name="x-poe-datastore-behavior" content="local_only">
 <meta http-equiv="Content-Security-Policy" content="
 default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com;
@@ -59,7 +99,6 @@ block-all-mixed-content;">
         const apiUrl = window.location.hostname === "localhost"
     ? "http://localhost:3001"
     : window.location.origin;
-        // console.log("API URL being used:", apiUrl);
 
         // Function to clean domain input (xóa http/https prefix)
         const cleanDomainInput = (input) => {
@@ -68,7 +107,6 @@ block-all-mixed-content;">
             // Xóa http://, https://, www. và trailing slash
             let cleaned = input.trim()
                 .replace(/^https?:\/\//, '')
-                // .replace(/^www\./, '')
                 .replace(/\/$/, '');
                 
             // Nếu có path sau domain, chỉ lấy phần domain
@@ -120,12 +158,30 @@ block-all-mixed-content;">
             }
         };
 
+        // Function to determine status color class based on domain status
+        const getStatusColorClass = (status) => {
+            if (!status) return 'text-gray-800';
+            const lowerStatus = status.toLowerCase();
+            
+            if (lowerStatus.includes('ok') || lowerStatus.includes('active')) {
+                return 'text-black';
+            }
+            if (lowerStatus.includes('prohibited')) {
+                return 'text-green-600 font-semibold';
+            }
+            if (['pendingtransfer', 'pendingrenew', 'pendingupdate', 'addperiod', 'autorenewperiod', 'renewperiod', 'transferperiod'].some(s => lowerStatus.includes(s))) {
+                return 'text-yellow-600 font-semibold';
+            }
+            if (['clienthold', 'serverhold', 'inactive', 'pendingcreate', 'pendingrestore', 'redemptionperiod', 'pendingdelete'].some(s => lowerStatus.includes(s))) {
+                return 'text-red-600 font-semibold';
+            }
+            return 'text-gray-800';
+        };
 
-        // Fetch SSL information từ API (không đổi)
+        // Fetch SSL information từ API
         const fetchSSLInfo = async (domain) => {
             try {
                 const response = await fetch(`${apiUrl}/api/ssl-summary/${domain}`);
-
                 const data = await response.json();
                 console.log("SSL API response:", data);
 
@@ -158,11 +214,10 @@ block-all-mixed-content;">
             }
         };
 
-        // Lấy thông tin WHOIS từ proxy server (cập nhật để trích xuất ngày đăng ký và hết hạn)
+        // Lấy thông tin WHOIS từ proxy server
         const fetchWhoisInfo = async (domain) => {
             try {
                 const response = await fetch(`${apiUrl}/api/whois/${domain}`);
-
                 const rawText = await response.text();
                 console.log("WHOIS raw:", rawText);
 
@@ -177,28 +232,28 @@ block-all-mixed-content;">
                     return match ? match[1].trim() : '';
                 };
 
-                // Lấy Registrar (hỗ trợ cả .vn và .com)
+                // Lấy Registrar
                 const registrar =
                     getMatch(/Registrar Name\s*:\s*(.+)/i) ||
                     getMatch(/Registrar:\s*(.+)/i);
 
-                // Lấy Owner (hỗ trợ cả các format khác nhau)
+                // Lấy Owner
                 const owner =
                     getMatch(/Owner Name\s*:\s*(.+)/i) ||
                     getMatch(/Registrant Organization\s*:\s*(.+)/i) ||
                     getMatch(/Registrant:\s*(.+)/i);
 
-                // Lấy Status (cả dòng nhiều trạng thái)
+                // Lấy Status
                 const status =
                     getMatch(/Status\s*:\s*(.+)/i) ||
                     getMatch(/Domain Status:\s*(.+)/i);
 
-                // Lấy Issue Date (hỗ trợ .vn và .com)
+                // Lấy Issue Date
                 const issueDate =
                     getMatch(/Issue Date\s*:\s*(.+)/i) ||
                     getMatch(/Creation Date\s*:\s*(.+)/i);
 
-                // Lấy Expired Date (hỗ trợ .vn và .com)
+                // Lấy Expired Date
                 const expiredDate =
                     getMatch(/Expired Date\s*:\s*(.+)/i) ||
                     getMatch(/Registry Expiry Date\s*:\s*(.+)/i);
@@ -225,7 +280,6 @@ block-all-mixed-content;">
         const fetchHostingInfo = async (domain) => {
             try {
                 const response = await fetch(`${apiUrl}/api/ip/${domain}`);
-
                 const data = await response.json();
                 console.log("IP/Hosting raw:", data);
 
@@ -241,7 +295,7 @@ block-all-mixed-content;">
             }
         };
 
-        // Enhanced analyze function với parallel execution - cập nhật để bao gồm ngày
+        // Enhanced analyze function với parallel execution
         const analyzeDomain = async (domain) => {
             if (!domain || typeof domain !== 'string') return;
 
@@ -258,7 +312,7 @@ block-all-mixed-content;">
                 ssl: { loading: true, completed: false, error: null }
             });
 
-            // Tạo base domain info ngay lập tức (thêm issueDate và expiredDate)
+            // Tạo base domain info ngay lập tức
             const baseDomainInfo = {
                 domain: cleanedDomain,
                 registrar: '',
@@ -275,11 +329,10 @@ block-all-mixed-content;">
             
             setDomainInfo(baseDomainInfo);
 
-            // THAY ĐỔI CHÍNH: Chạy TẤT CẢ các API song song thay vì tuần tự
+            // Chạy TẤT CẢ các API song song
             const promises = [
                 // WHOIS Promise
                 fetchWhoisInfo(cleanedDomain).then(whoisInfo => {
-                    // Cập nhật domain info với WHOIS data ngay khi có
                     setDomainInfo(prev => ({
                         ...prev,
                         registrar: whoisInfo.registrar,
@@ -302,7 +355,6 @@ block-all-mixed-content;">
 
                 // Hosting Promise
                 fetchHostingInfo(cleanedDomain).then(hostingInfo => {
-                    // Cập nhật domain info với hosting data ngay khi có
                     setDomainInfo(prev => ({
                         ...prev,
                         ip: hostingInfo.ip,
@@ -324,7 +376,6 @@ block-all-mixed-content;">
 
                 // SSL Promise
                 fetchSSLInfo(cleanedDomain).then(sslData => {
-                    // Cập nhật SSL info ngay khi có
                     setSslInfo(sslData);
                     
                     setAnalysisProgress(prev => ({
@@ -339,7 +390,6 @@ block-all-mixed-content;">
                 })
             ];
 
-            // Chờ tất cả promises hoàn thành (nhưng mỗi cái sẽ update UI ngay khi xong)
             try {
                 await Promise.allSettled(promises);
             } catch (err) {
@@ -402,14 +452,12 @@ Trong trường hợp, Quý khách hàng không phản hồi lại hoặc không
         const processSSLRequestLink = () => {
             if (!sslRequestLink) return;
             
-            // Extract auth from SSL request link
             const authMatch = sslRequestLink.match(/auth=([a-f0-9]+)/);
             if (!authMatch) return;
             
             const auth = authMatch[1];
-            const domain = domainInput.replace(/^[^.]+\./, ''); // Remove subdomain if present
+            const domain = domainInput.replace(/^[^.]+\./, '');
             
-            // Mock domain management link generation
             const mockId = '294574';
             const managementLink = `https://support.pavietnam.vn/index.php?pa=dnsvn&idaccount=${mockId}`;
             setDomainManagementLink(managementLink);
@@ -476,19 +524,17 @@ ${caRoot}`;
             window.open(url, '_blank');
         };
 
-        // Function to calculate renewal date (20 days before expiration)
         const calculateRenewalDate = (validTo) => {
             if (!validTo) return '';
             try {
                 const expirationDate = new Date(validTo);
-                const renewalDate = new Date(expirationDate.getTime() - (20 * 24 * 60 * 60 * 1000)); // 20 days before
+                const renewalDate = new Date(expirationDate.getTime() - (20 * 24 * 60 * 60 * 1000));
                 return renewalDate.toLocaleDateString('vi-VN');
             } catch (err) {
                 return '';
             }
         };
 
-        // Function to format SSL expiration date
         const formatSSLDate = (dateString) => {
             if (!dateString) return '';
             try {
@@ -499,7 +545,6 @@ ${caRoot}`;
             }
         };
 
-        // Function to generate SSL renewal notice template
         const generateSSLRenewalNotice = (sslInfo) => {
             if (!sslInfo || !sslInfo.exists || sslInfo.days_remaining < 30) return '';
             
@@ -558,27 +603,26 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                             _react2.default.createElement('label', { className: "block text-sm font-medium text-gray-700 mb-2" }, "Nhập tên domain (ví dụ: example.com):"),
                                             _react2.default.createElement('style', null, `
                                                 input::placeholder {
-                                                    color: rgba(55, 65, 81, 0.5); /* Tailwind gray-700 with 50% opacity */
+                                                    color: rgba(55, 65, 81, 0.5);
                                                     font-style: italic;
                                                     font-weight: 300;
                                                     font-family: 'Inter', sans-serif;
                                                     transition: color 0.3s ease-in-out;
                                                 }
                                                 input:focus::placeholder {
-                                                    color: rgba(55, 65, 81, 0.3); /* Slightly more transparent when focused */
+                                                    color: rgba(55, 65, 81, 0.3);
                                                 }
-                                                /* IMPROVED LOADING ANIMATIONS - Tăng tốc độ animation */
                                                 .fast-spin {
-                                                    animation: spin 0.5s linear infinite; /* Từ 1s xuống 0.5s */
+                                                    animation: spin 0.5s linear infinite;
                                                 }
                                                 .ultra-fast-spin {
-                                                    animation: spin 0.3s linear infinite; /* Còn nhanh hơn */
+                                                    animation: spin 0.3s linear infinite;
                                                 }
                                                 .pulse-fast {
-                                                    animation: pulse 1s ease-in-out infinite; /* Từ 2s xuống 1s */
+                                                    animation: pulse 1s ease-in-out infinite;
                                                 }
                                                 .bounce-fast {
-                                                    animation: bounce 0.8s infinite; /* Từ 1s xuống 0.8s */
+                                                    animation: bounce 0.8s infinite;
                                                 }
                                                 @keyframes spin {
                                                     from { transform: rotate(0deg); }
@@ -622,7 +666,7 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                             )
                                         ),
 
-                                        /* Enhanced Progress Indicators với animation nhanh hơn */
+                                        /* Enhanced Progress Indicators */
                                         isAnalyzing && (
                                             _react2.default.createElement('div', { className: "bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 border border-blue-200 rounded-lg p-4 pulse-fast" },
                                                 _react2.default.createElement('h3', { className: "text-sm font-semibold text-blue-800 mb-3 flex items-center" }, 
@@ -630,7 +674,6 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                                     "Tiến trình phân tích (Song song):"
                                                 ),
                                                 _react2.default.createElement('div', { className: "grid grid-cols-1 md:grid-cols-3 gap-3 text-sm" },
-                                                    // WHOIS Progress
                                                     _react2.default.createElement('div', { className: "flex items-center bg-white rounded-md p-2 border" },
                                                         analysisProgress.whois.loading ? 
                                                             _react2.default.createElement('div', { className: "fast-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent mr-2" }) :
@@ -641,7 +684,6 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                                             "WHOIS"
                                                         )
                                                     ),
-                                                    // Hosting Progress
                                                     _react2.default.createElement('div', { className: "flex items-center bg-white rounded-md p-2 border" },
                                                         analysisProgress.hosting.loading ? 
                                                             _react2.default.createElement('div', { className: "fast-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent mr-2" }) :
@@ -652,7 +694,6 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                                             "Hosting/IP"
                                                         )
                                                     ),
-                                                    // SSL Progress
                                                     _react2.default.createElement('div', { className: "flex items-center bg-white rounded-md p-2 border" },
                                                         analysisProgress.ssl.loading ? 
                                                             _react2.default.createElement('div', { className: "fast-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent mr-2" }) :
@@ -667,7 +708,7 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                             )
                                         ),
 
-                                        /* Domain Information - Cập nhật để thêm ngày đăng ký/hết hạn, highlight status, và nút website */
+                                        /* Domain Information */
                                         domainInfo && (
                                             _react2.default.createElement('div', { className: "bg-white rounded-lg border border-green-200 p-4 shadow-sm" },
                                                 _react2.default.createElement('h3', { className: "text-lg font-semibold text-gray-800 mb-3 flex items-center" },
@@ -675,17 +716,15 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                                     "Domain Information"
                                                 ),
                                                 _react2.default.createElement('div', { className: "grid md:grid-cols-2 gap-4 text-sm" },
-                                                    // Domain với nút truy cập website
                                                     _react2.default.createElement('div', null,
-                                                    _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Domain:"),
-                                                    _react2.default.createElement('a', {
-                                                        href: `https://${domainInfo.domain}`,
-                                                        target: "_blank",
-                                                        rel: "noopener noreferrer",
-                                                        className: "ml-2 text-blue-600 hover:underline"
-                                                    }, domainInfo.domain || 'N/A')
+                                                        _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Domain:"),
+                                                        _react2.default.createElement('a', {
+                                                            href: `https://${domainInfo.domain}`,
+                                                            target: "_blank",
+                                                            rel: "noopener noreferrer",
+                                                            className: "ml-2 text-blue-600 hover:underline"
+                                                        }, domainInfo.domain || 'N/A')
                                                     ),
-                                                    // IP
                                                     _react2.default.createElement('div', null,
                                                         _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "IP:"),
                                                         _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, 
@@ -698,7 +737,6 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                                                 )
                                                         )
                                                     ),
-                                                    // Registrar
                                                     _react2.default.createElement('div', null,
                                                         _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Registrar:"),
                                                         _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, 
@@ -711,7 +749,6 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                                                 )
                                                         )
                                                     ),
-                                                    // Name Servers
                                                     _react2.default.createElement('div', null,
                                                         _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Name Servers:"),
                                                         _react2.default.createElement('div', { className: "ml-2 text-gray-800" },
@@ -727,7 +764,6 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                                                 )
                                                         )
                                                     ),
-                                                    // AS
                                                     _react2.default.createElement('div', null,
                                                         _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "AS:"),
                                                         _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, 
@@ -740,11 +776,10 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                                                 )
                                                         )
                                                     ),
-                                                    // Status với highlight đỏ nếu có clientHold
                                                     _react2.default.createElement('div', null,
                                                         _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Status:"),
                                                         _react2.default.createElement('span', { 
-                                                            className: `ml-2 ${domainInfo.status && domainInfo.status.toLowerCase().includes('clienthold') ? 'text-red-600 font-semibold' : 'text-gray-800'}` 
+                                                            className: `ml-2 ${getStatusColorClass(domainInfo.status)}` 
                                                         }, 
                                                             domainInfo.status ? domainInfo.status : 
                                                                 (analysisProgress.whois.loading ? 
@@ -755,23 +790,18 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                                                 )
                                                         )
                                                     ),
-
-                                                    // Creation Date
                                                     domainInfo.issueDate && (
                                                         _react2.default.createElement('div', null,
                                                             _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Creation Date:"),
                                                             _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, formatDate(domainInfo.issueDate))
                                                         )
                                                     ),
-
-                                                    // Expiry Date
                                                     domainInfo.expiredDate && (
                                                         _react2.default.createElement('div', null,
                                                             _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Registry Expiry Date:"),
                                                             _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, formatDate(domainInfo.expiredDate))
                                                         )
                                                     ),
-                                                    // Country (dưới ngày hết hạn)
                                                     _react2.default.createElement('div', null,
                                                         _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Country:"),
                                                         _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, 
@@ -788,7 +818,7 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                             )
                                         ),
 
-                                        /* SSL Information Panel - Hiển thị ngay khi có với enhanced loading */
+                                        /* SSL Information Panel */
                                         (sslInfo || (domainInfo && analysisProgress.ssl.loading)) && (
                                             _react2.default.createElement('div', { className: "mt-6" },
                                                 _react2.default.createElement('div', { className: `bg-white rounded-lg border p-4 shadow-sm ${sslInfo ? (sslInfo.exists ? 'border-green-200' : 'border-red-200') : 'border-blue-200'}` },
@@ -855,8 +885,7 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                             )
                                         ),
 
-
-                                        /* SSL Search Link - Hiển thị ngay sau khi phân tích  */
+                                        /* SSL Search Link */
                                         domainSearchLink && (isAnalyzing || domainInfo) && (
                                             _react2.default.createElement('div', { className: "mt-6 bg-white rounded-lg border p-4" },
                                                 _react2.default.createElement('h3', { className: "text-md font-semibold text-gray-800 mb-2" }, "Tìm kiếm SSL đã mua:"),
@@ -871,7 +900,7 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                             )
                                         ),
 
-                                        /* Instructions for Finding Order ID - Hiển thị sau khi phân tích */
+                                        /* Instructions for Finding Order ID */
                                         domainSearchLink && (isAnalyzing || domainInfo) && (
                                             _react2.default.createElement('div', { className: "mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4" },
                                                 _react2.default.createElement('div', { className: "flex items-start" },
@@ -887,7 +916,7 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                             )
                                         ),
 
-                                        /* SSL Renewal Notice Template*/
+                                        /* SSL Renewal Notice Template */
                                         sslInfo && sslInfo.exists && sslInfo.days_remaining >= 30 && (
                                             _react2.default.createElement('div', { className: "mt-6 bg-emerald-50 border border-emerald-200 rounded-lg p-4" },
                                                 _react2.default.createElement('div', { className: "flex items-center mb-3" },
@@ -909,7 +938,7 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                             )
                                         ),
 
-                                        /* Domain/DNS Notice Template*/
+                                        /* Domain/DNS Notice Template */
                                         domainSearchLink && (isAnalyzing || domainInfo) && (
                                             _react2.default.createElement('div', { className: "mt-6 bg-gray-100 border border-gray-200 rounded-lg p-4" },
                                                 _react2.default.createElement('div', { className: "flex items-center mb-3" },
@@ -920,7 +949,7 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                                 ),
                                                 _react2.default.createElement('div', { className: "bg-white border border-gray-200 rounded p-3 mb-3" },
                                                     _react2.default.createElement('textarea', {
-                                                        value: getResponseText(domainInfo.registrar, domainInfo.isp, domainInfo.nameservers), // Sửa hosting thành isp
+                                                        value: getResponseText(domainInfo.registrar, domainInfo.isp, domainInfo.nameservers),
                                                         readOnly: true,
                                                         className: "w-full h-40 p-3 border border-gray-200 rounded text-sm resize-none bg-gray-50 text-gray-700"
                                                     })
@@ -937,11 +966,11 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                             )
                                         ),
 
-                                        /* SSL Request Link Input - Only for PA domain + hosting */
+                                        /* SSL Request Link Input */
                                         domainInfo && domainInfo.registrar === 'P.A. Viet Nam Company Limited' && 
                                         (domainInfo.isp === 'SUPERDATA-VN' || domainInfo.nameservers.some(ns => ns.includes('pavietnam'))) && (
                                             _react2.default.createElement('div', { className: "mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4" },
-                                                // ... giữ nguyên phần này (nếu có, nhưng code gốc không có chi tiết, bạn có thể thêm nếu cần)
+                                                // ... giữ nguyên phần này
                                             )
                                         )
                                     )
@@ -949,67 +978,62 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                             )
                         ),
 
-                        /* SSL Management Tab - Giữ nguyên */
+                        /* SSL Management Tab */
                         activeTab === 'ssl' && (
-                        _react2.default.createElement('div', { className: "space-y-6" },
-                            _react2.default.createElement('div', { className: "bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6" },
-                            _react2.default.createElement('div', { className: "flex items-center mb-4" },
-                                _react2.default.createElement(_lucidereact.Shield, { className: "w-6 h-6 text-blue-600 mr-3" }),
-                                _react2.default.createElement('h2', { className: "text-xl font-bold text-blue-800" }, "Bước 2: Quản lý SSL theo Link/Order ID")
-                            ),
                             _react2.default.createElement('div', { className: "space-y-6" },
-                                _react2.default.createElement('div', null,
-                                _react2.default.createElement('label', { className: "block text-sm font-medium text-gray-700 mb-2" }, "Nhập link Order ID(gia hạn/đăng ký mới) chứa ID:"),
-                                _react2.default.createElement('label', { className: "block text-sm font-medium text-gray-700 mb-2 mt-1" },
-                                    "Tham khảo: ",
-                                    _react2.default.createElement('a', {
-                                        href: "https://raw.githubusercontent.com/lucskyost/pavietnam/refs/heads/main/order_id_url.jpg",
-                                        target: "_blank",
-                                        rel: "noopener noreferrer",
-                                        className: "text-blue-600 underline"
-                                    }, "Link hướng dẫn")
-                                ),
-                                _react2.default.createElement('input', {
-                                    type: "text",
-                                    value: inputLink,
-                                    onChange: handleSSLLinkInput,
-                                    placeholder: "https://support.pavietnam.vn/index.php?pa=ssl-helper&act=orderDetail&id=99999999",
-                                    className: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                }),
-                                // Hiển thị ID đã phát hiện
-                                extractedId && (
-                                    _react2.default.createElement('div', { className: "mt-2 text-sm text-green-600" }, "✓ Đã phát hiện ID: ",
-                                    _react2.default.createElement('span', { className: "font-mono font-bold" }, extractedId)
-                                    )
-                                )
-                                ),
-                                // Phần hiển thị các link SSL (Order Detail, Register, Renew, Download)
-                                extractedId && (
-                                _react2.default.createElement('div', { className: "grid lg:grid-cols-2 xl:grid-cols-4 gap-4" },
-                                    /* Order Detail */
-                                    _react2.default.createElement('div', { className: "bg-purple-50 border border-purple-200 rounded-lg p-4" },
-                                    _react2.default.createElement('div', { className: "flex items-center mb-3" },
-                                        _react2.default.createElement(_lucidereact.FileText, { className: "w-4 h-4 text-purple-600 mr-2" }),
-                                        _react2.default.createElement('h3', { className: "text-lg font-semibold text-purple-800" }, "Đơn Hàng(Copy đính kèm với Private Key & Cert)")
+                                _react2.default.createElement('div', { className: "bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6" },
+                                    _react2.default.createElement('div', { className: "flex items-center mb-4" },
+                                        _react2.default.createElement(_lucidereact.Shield, { className: "w-6 h-6 text-blue-600 mr-3" }),
+                                        _react2.default.createElement('h2', { className: "text-xl font-bold text-blue-800" }, "Bước 2: Quản lý SSL theo Link/Order ID")
                                     ),
-                                    _react2.default.createElement('div', { className: "flex gap-2" },
-                                        _react2.default.createElement('button', {
-                                        onClick: () => copyToClipboard(sslLinks.order, 'order'),
-                                        className: "flex items-center px-3 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors text-sm"
-                                        },
-                                        copied.order ? _react2.default.createElement(_lucidereact.Check, { className: "w-4 h-4 mr-1" }) : _react2.default.createElement(_lucidereact.Copy, { className: "w-4 h-4 mr-1" }),
-                                        copied.order ? 'OK!' : 'Copy'
+                                    _react2.default.createElement('div', { className: "space-y-6" },
+                                        _react2.default.createElement('div', null,
+                                            _react2.default.createElement('label', { className: "block text-sm font-medium text-gray-700 mb-2" }, "Nhập link Order ID(gia hạn/đăng ký mới) chứa ID:"),
+                                            _react2.default.createElement('label', { className: "block text-sm font-medium text-gray-700 mb-2 mt-1" },
+                                                "Tham khảo: ",
+                                                _react2.default.createElement('a', {
+                                                    href: "https://raw.githubusercontent.com/lucskyost/pavietnam/refs/heads/main/order_id_url.jpg",
+                                                    target: "_blank",
+                                                    rel: "noopener noreferrer",
+                                                    className: "text-blue-600 underline"
+                                                }, "Link hướng dẫn")
+                                            ),
+                                            _react2.default.createElement('input', {
+                                                type: "text",
+                                                value: inputLink,
+                                                onChange: handleSSLLinkInput,
+                                                placeholder: "https://support.pavietnam.vn/index.php?pa=ssl-helper&act=orderDetail&id=99999999",
+                                                className: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            }),
+                                            extractedId && (
+                                                _react2.default.createElement('div', { className: "mt-2 text-sm text-green-600" }, "✓ Đã phát hiện ID: ",
+                                                    _react2.default.createElement('span', { className: "font-mono font-bold" }, extractedId)
+                                                )
+                                            )
                                         ),
-                                        _react2.default.createElement('button', {
-                                        onClick: () => openLink(sslLinks.order),
-                                        className: "flex items-center px-3 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors text-sm"
-                                        },
-                                        _react2.default.createElement(_lucidereact.ExternalLink, { className: "w-4 h-4 mr-1" }), "Mở"
-                                        )
-                                    )
-                                    ),
-
-                                                /* Register */
+                                        extractedId && (
+                                            _react2.default.createElement('div', { className: "grid lg:grid-cols-2 xl:grid-cols-4 gap-4" },
+                                                _react2.default.createElement('div', { className: "bg-purple-50 border border-purple-200 rounded-lg p-4" },
+                                                    _react2.default.createElement('div', { className: "flex items-center mb-3" },
+                                                        _react2.default.createElement(_lucidereact.FileText, { className: "w-4 h-4 text-purple-600 mr-2" }),
+                                                        _react2.default.createElement('h3', { className: "text-lg font-semibold text-purple-800" }, "Đơn Hàng(Copy đính kèm với Private Key & Cert)")
+                                                    ),
+                                                    _react2.default.createElement('div', { className: "flex gap-2" },
+                                                        _react2.default.createElement('button', {
+                                                            onClick: () => copyToClipboard(sslLinks.order, 'order'),
+                                                            className: "flex items-center px-3 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors text-sm"
+                                                        },
+                                                            copied.order ? _react2.default.createElement(_lucidereact.Check, { className: "w-4 h-4 mr-1" }) : _react2.default.createElement(_lucidereact.Copy, { className: "w-4 h-4 mr-1" }),
+                                                            copied.order ? 'OK!' : 'Copy'
+                                                        ),
+                                                        _react2.default.createElement('button', {
+                                                            onClick: () => openLink(sslLinks.order),
+                                                            className: "flex items-center px-3 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors text-sm"
+                                                        },
+                                                            _react2.default.createElement(_lucidereact.ExternalLink, { className: "w-4 h-4 mr-1" }), "Mở"
+                                                        )
+                                                    )
+                                                ),
                                                 _react2.default.createElement('div', { className: "bg-blue-50 border border-blue-200 rounded-lg p-4" },
                                                     _react2.default.createElement('div', { className: "flex items-center mb-3" },
                                                         _react2.default.createElement('div', { className: "w-3 h-3 bg-blue-500 rounded-full mr-2" }),
@@ -1031,8 +1055,6 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                                         )
                                                     )
                                                 ),
-
-                                                /* Renew */
                                                 _react2.default.createElement('div', { className: "bg-orange-50 border border-orange-200 rounded-lg p-4" },
                                                     _react2.default.createElement('div', { className: "flex items-center mb-3" },
                                                         _react2.default.createElement(_lucidereact.RefreshCw, { className: "w-4 h-4 text-orange-600 mr-2" }),
@@ -1054,8 +1076,6 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                                         )
                                                     )
                                                 ),
-
-                                                /* Download */
                                                 _react2.default.createElement('div', { className: "bg-green-50 border border-green-200 rounded-lg p-4" },
                                                     _react2.default.createElement('div', { className: "flex items-center mb-3" },
                                                         _react2.default.createElement('div', { className: "w-3 h-3 bg-green-500 rounded-full mr-2" }),
@@ -1084,7 +1104,7 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                             )
                         ),
 
-                        /* Certificate Generator Tab - Giữ nguyên */
+                        /* Certificate Generator Tab */
                         activeTab === 'certificate' && (
                             _react2.default.createElement('div', { className: "space-y-6" },
                                 _react2.default.createElement('div', { className: "bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg p-6" },
@@ -1172,22 +1192,17 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
             var firstSheetName = workbook.SheetNames[0];
             var worksheet = workbook.Sheets[firstSheetName];
 
-            // Convert sheet to JSON to filter blank rows
             var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
-            // Filter out blank rows (rows where all cells are empty, null, or undefined)
             var filteredData = jsonData.filter(row => row.some(filledCell));
 
-            // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
             var headerRowIndex = filteredData.findIndex((row, index) =>
               row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
             );
-            // Fallback
             if (headerRowIndex === -1 || headerRowIndex > 25) {
               headerRowIndex = 0;
             }
 
-            // Convert filtered JSON back to CSV
-            var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+            var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex));
             csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
             return csv;
         } catch (e) {
@@ -1199,7 +1214,8 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
     }
 </script>
 <script src="https://puc.poecdn.net/authenticated_preview_page/syncedState.bd4eeeb8e8e02052ee92.js"></script>
-<script src="https://puc.poecdn.net/authenticated_preview_page/syncedState.bd4eeeb8e8e02052ee92.js"></script><script src="https://puc.poecdn.net/authenticated_preview_page/syncedState.bd4eeeb8e8e02052ee92.js"></script><script src="https://puc.poecdn.net/authenticated_preview_page/syncedState.bd4eeeb8e8e02052ee92.js"></script></head>
+</head>
 <body>
 <div id="preview-app"></div>
-</body></html>
+</body>
+</html>
