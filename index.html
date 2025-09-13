@@ -167,13 +167,13 @@ block-all-mixed-content;">
                 return 'text-black';
             }
             if (lowerStatus.includes('prohibited')) {
-                return 'text-green-600 font-semibold';
+                return 'text-green-600';
             }
             if (['pendingtransfer', 'pendingrenew', 'pendingupdate', 'addperiod', 'autorenewperiod', 'renewperiod', 'transferperiod'].some(s => lowerStatus.includes(s))) {
-                return 'text-yellow-600 font-semibold';
+                return 'text-yellow-600';
             }
             if (['clienthold', 'serverhold', 'inactive', 'pendingcreate', 'pendingrestore', 'redemptionperiod', 'pendingdelete'].some(s => lowerStatus.includes(s))) {
-                return 'text-red-600 font-semibold';
+                return 'text-red-600';
             }
             return 'text-gray-800';
         };
