@@ -110,13 +110,11 @@ block-all-mixed-content;">
         const formatDate = (dateString) => {
             if (!dateString) return '';
             try {
-                const date = new Date(dateString);
-                return date.toLocaleDateString('vi-VN', {
-                    timeZone: 'UTC',
-                    year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit'
-                }).replace(/-/g, '/'); // đảm bảo format yyyy/mm/dd
+                const d = new Date(dateString);
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                return `${y}/${m}/${day}`;   // yyyy/mm/dd
             } catch (err) {
                 return dateString;
             }
