@@ -42,7 +42,7 @@
 <head>
 <meta name="x-poe-datastore-behavior" content="local_only">
 <meta http-equiv="Content-Security-Policy" content="
-default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com https://cdn.socket.io;
+default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com;
 connect-src 'self' http://localhost:3001 http://ip-api.com https://ssl-checker.io https://whois.net.vn;
 frame-src 'self' https://www.youtube.com https://trytako.com;
 child-src 'self';
@@ -1359,26 +1359,13 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
     }
 </script>
 <script src="https://puc.poecdn.net/authenticated_preview_page/syncedState.bd4eeeb8e8e02052ee92.js"></script>
-
-
 </head>
-
 <body>
+    
 <div id="preview-app"></div>
-
-<!-- Div hiển thị số online ở góc phải dưới -->
-<div id="online-counter"
-     style="position: fixed; bottom: 10px; right: 10px;
-            background: rgba(0,0,0,0.7); color: white;
-            padding: 6px 12px; border-radius: 8px;
-            font-family: sans-serif; font-size: 14px; z-index: 9999;">
-   Online: 0
-</div>
-
-<!-- Nạp socket.io client từ server Node qua Nginx -->
-<script src="/socket.io/socket.io.js"></script>
+<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 <script>
-  // 1. Sinh userId duy nhất và lưu vào localStorage
+  // Sinh userId nếu chưa có
   function getOrCreateUserId() {
     let userId = localStorage.getItem("userId");
     if (!userId) {
@@ -1387,30 +1374,33 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
     }
     return userId;
   }
+
   const userId = getOrCreateUserId();
+  const socket = io("http://localhost:3001");
 
-  // 2. Kết nối WebSocket tới server (theo domain hiện tại)
-  const socket = io(window.location.origin, {
-    transports: ["websocket"],
-  });
-
-  // 3. Khi kết nối, gửi userId cho server
   socket.on("connect", () => {
-    socket.emit("join", { userId });
+    socket.emit("user_connected", userId);
   });
 
-  // 4. Khi đóng tab, báo cho server
-  window.addEventListener("beforeunload", () => {
-    socket.emit("leave", { userId });
+  socket.on("online_count", (count) => {
+    document.getElementById("online-counter").innerText = `👥 Online: ${count}`;
   });
 
-  // 5. Nhận số lượng user online từ server và hiển thị
-  socket.on("onlineCount", (count) => {
-    const counter = document.getElementById("online-counter");
-    if (counter) {
-      counter.innerText = `Online: ${count}`;
-    }
-  });
+  // Tạo badge hiển thị
+  const badge = document.createElement("div");
+  badge.id = "online-counter";
+  badge.style.position = "fixed";
+  badge.style.bottom = "10px";
+  badge.style.right = "10px";
+  badge.style.background = "rgba(0,0,0,0.7)";
+  badge.style.color = "#fff";
+  badge.style.padding = "6px 12px";
+  badge.style.borderRadius = "8px";
+  badge.style.fontSize = "14px";
+  badge.style.zIndex = "9999";
+  badge.innerText = "👥 Online: 0";
+  document.body.appendChild(badge);
 </script>
+
 </body>
 </html>

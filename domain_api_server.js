@@ -1,31 +1,61 @@
-const express = require("express");
-const cors = require("cors");
-const axios = require("axios");
-const http = require("http");
-const { Server } = require("socket.io");
+const express = require('express');
+const cors = require('cors');
+const axios = require('axios');
+const http = require('http');
+const { Server } = require('socket.io');
 
 const app = express();
 app.use(cors());
 
-// =======================
-//  Các API cũ
-// =======================
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: { origin: "*" }
+});
 
-// WHOIS lookup (whois.net.vn)
-app.get("/api/whois/:domain", async (req, res) => {
+// Quản lý user và tab
+let users = {}; 
+// users = { userId: { tabCount: 2 } }
+
+io.on('connection', (socket) => {
+  let currentUserId = null;
+
+  socket.on('user_connected', (userId) => {
+    currentUserId = userId;
+
+    if (!users[userId]) {
+      users[userId] = { tabCount: 0 };
+    }
+    users[userId].tabCount++;
+
+    io.emit('online_count', Object.keys(users).length);
+  });
+
+  socket.on('disconnect', () => {
+    if (currentUserId && users[currentUserId]) {
+      users[currentUserId].tabCount--;
+      if (users[currentUserId].tabCount <= 0) {
+        delete users[currentUserId];
+      }
+      io.emit('online_count', Object.keys(users).length);
+    }
+  });
+});
+
+// API WHOIS
+app.get('/api/whois/:domain', async (req, res) => {
   try {
     const { domain } = req.params;
     const url = `https://whois.net.vn/whois.php?domain=${domain}&act=getwhois`;
-    const response = await axios.get(url, { responseType: "text" });
-    res.set("Content-Type", "text/plain; charset=utf-8");
+    const response = await axios.get(url, { responseType: 'text' });
+    res.set('Content-Type', 'text/plain; charset=utf-8');
     res.send(response.data);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// IP info (ip-api.com)
-app.get("/api/ip/:domain", async (req, res) => {
+// API IP
+app.get('/api/ip/:domain', async (req, res) => {
   try {
     const { domain } = req.params;
     const response = await axios.get(`http://ip-api.com/json/${domain}`);
@@ -35,19 +65,18 @@ app.get("/api/ip/:domain", async (req, res) => {
   }
 });
 
-// SSL info (ssl-checker.io)
-app.get("/api/ssl-summary/:domain", async (req, res) => {
+// API SSL
+app.get('/api/ssl-summary/:domain', async (req, res) => {
   try {
     const { domain } = req.params;
     const url = `https://ssl-checker.io/api/v1/check/${domain}`;
     const { data } = await axios.get(url);
 
     if (!data.result) {
-      return res.status(404).json({ error: "No SSL data found for this domain." });
+      return res.status(404).json({ error: 'No SSL data found for this domain.' });
     }
 
     const result = data.result;
-
     res.json({
       domain: result.host,
       ip: result.resolved_ip,
@@ -58,51 +87,13 @@ app.get("/api/ssl-summary/:domain", async (req, res) => {
       valid_from: result.valid_from,
       valid_to: result.valid_till,
       days_remaining: result.days_left,
-      is_valid: result.cert_valid,
+      is_valid: result.cert_valid
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// =======================
-//  WebSocket với Socket.IO
-// =======================
-
-const server = http.createServer(app);
-const io = new Server(server, {
-  cors: { origin: "*" },
-});
-
-// Lưu danh sách user đang online (theo userId duy nhất)
-const onlineUsers = new Set();
-
-io.on("connection", (socket) => {
-  console.log("🔌 New client connected:", socket.id);
-
-  socket.on("join", ({ userId }) => {
-    onlineUsers.add(userId);
-    console.log("User joined:", userId, "=> Online:", onlineUsers.size);
-    io.emit("onlineCount", onlineUsers.size);
-  });
-
-  socket.on("leave", ({ userId }) => {
-    onlineUsers.delete(userId);
-    console.log("User left:", userId, "=> Online:", onlineUsers.size);
-    io.emit("onlineCount", onlineUsers.size);
-  });
-
-  socket.on("disconnect", () => {
-    console.log("❌ Client disconnected:", socket.id);
-    io.emit("onlineCount", onlineUsers.size);
-  });
-});
-
-// =======================
-//  Start server
-// =======================
-
-const PORT = 3001;
-server.listen(PORT, () => {
-  console.log(`✓ API + WebSocket server running at http://localhost:${PORT}`);
+server.listen(3001, () => {
+  console.log('✓ Proxy server with socket.io running at http://localhost:3001');
 });
