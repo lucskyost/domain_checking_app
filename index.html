@@ -1365,18 +1365,14 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
 <div id="preview-app"></div>
 <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 <script>
-  // Sinh userId nếu chưa có
-  function getOrCreateUserId() {
-    let userId = localStorage.getItem("userId");
-    if (!userId) {
-      userId = crypto.randomUUID();
-      localStorage.setItem("userId", userId);
-    }
-    return userId;
-  }
+  const userId = localStorage.getItem("userId") || (()=>{
+    const id = crypto.randomUUID();
+    localStorage.setItem("userId", id);
+    return id;
+  })();
 
-  const userId = getOrCreateUserId();
-  const socket = io("http://localhost:3001");
+
+  const socket = io();
 
   socket.on("connect", () => {
     socket.emit("user_connected", userId);
@@ -1386,7 +1382,6 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
     document.getElementById("online-counter").innerText = `👥 Online: ${count}`;
   });
 
-  // Tạo badge hiển thị
   const badge = document.createElement("div");
   badge.id = "online-counter";
   badge.style.position = "fixed";
@@ -1401,6 +1396,7 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
   badge.innerText = "👥 Online: 0";
   document.body.appendChild(badge);
 </script>
+
 
 </body>
 </html>
