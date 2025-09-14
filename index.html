@@ -833,11 +833,13 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                                         _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Status:"),
                                                         domainInfo.status ? 
                                                             _react2.default.createElement('span', { className: "ml-2" }, 
-                                                                domainInfo.status.split(/[, ]+/).map((st, idx) =>
+                                                                domainInfo.status.split(/[, ]+/).map((st, idx, arr) =>
                                                                     _react2.default.createElement('span', { 
                                                                         key: idx, 
-                                                                        className: `${getStatusColorClass(st)} mr-2` 
-                                                                    }, st)
+                                                                        className: `${getStatusColorClass(st)} mr-1` 
+                                                                    }, 
+                                                                        st + (idx < arr.length - 1 ? ', ' : '')
+                                                                    )
                                                                 )
                                                             )
                                                             : (analysisProgress.whois.loading ? 
