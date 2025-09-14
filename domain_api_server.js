@@ -93,8 +93,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log("Client disconnected:", socket.id);
-    // Không xoá userId ở đây vì có thể còn tab khác của cùng user đang mở
+    console.log("❌ Client disconnected:", socket.id);
     io.emit("onlineCount", onlineUsers.size);
   });
 });
