@@ -1,11 +1,24 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
+const http = require('http');
+const { Server } = require('socket.io');
 
 const app = express();
 app.use(cors());
 
-// WHOIS lookup (whois.net.vn)
+// Tạo HTTP server từ Express
+const server = http.createServer(app);
+
+// Gắn Socket.IO vào server
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+  }
+});
+
+// ==================== API ROUTES ====================
+// WHOIS lookup(whois.net.vn)
 app.get('/api/whois/:domain', async (req, res) => {
     try {
         const { domain } = req.params;
@@ -18,7 +31,7 @@ app.get('/api/whois/:domain', async (req, res) => {
     }
 });
 
-// IP info (ip-api.com)
+// IP info(ip-api.com)
 app.get('/api/ip/:domain', async (req, res) => {
     try {
         const { domain } = req.params;
@@ -29,7 +42,7 @@ app.get('/api/ip/:domain', async (req, res) => {
     }
 });
 
-// SSL info (ssl-checker.io)
+// SSL info(ssl-checker.io)
 app.get('/api/ssl-summary/:domain', async (req, res) => {
     try {
         const { domain } = req.params;
@@ -41,7 +54,6 @@ app.get('/api/ssl-summary/:domain', async (req, res) => {
         }
 
         const result = data.result;
-
         res.json({
             domain: result.host,
             ip: result.resolved_ip,
@@ -59,7 +71,50 @@ app.get('/api/ssl-summary/:domain', async (req, res) => {
     }
 });
 
-// Start server
-app.listen(3001, () => {
-    console.log('✓ Proxy server running at http://localhost:3001');
+// ==================== SOCKET.IO ====================
+const activeUsers = new Map(); // userId -> số tab đang mở
+
+function broadcastOnlineCount() {
+  io.emit("onlineCount", activeUsers.size);
+}
+
+io.on("connection", (socket) => {
+  socket.on("join", ({ userId }) => {
+    if (!activeUsers.has(userId)) {
+      activeUsers.set(userId, 0);
+    }
+    activeUsers.set(userId, activeUsers.get(userId) + 1);
+    socket.userId = userId;
+    broadcastOnlineCount();
+  });
+
+  socket.on("leave", ({ userId }) => {
+    if (activeUsers.has(userId)) {
+      const tabs = activeUsers.get(userId) - 1;
+      if (tabs <= 0) {
+        activeUsers.delete(userId);
+      } else {
+        activeUsers.set(userId, tabs);
+      }
+      broadcastOnlineCount();
+    }
+  });
+
+  socket.on("disconnect", () => {
+    const userId = socket.userId;
+    if (userId && activeUsers.has(userId)) {
+      const tabs = activeUsers.get(userId) - 1;
+      if (tabs <= 0) {
+        activeUsers.delete(userId);
+      } else {
+        activeUsers.set(userId, tabs);
+      }
+      broadcastOnlineCount();
+    }
+  });
+});
+
+// ==================== START ====================
+server.listen(3001, () => {
+  console.log('✓ API + Socket.IO server running at http://localhost:3001');
 });

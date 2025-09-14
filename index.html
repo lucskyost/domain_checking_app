@@ -1362,5 +1362,53 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
 </head>
 <body>
 <div id="preview-app"></div>
+<!-- Thêm thư viện Socket.IO client -->
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+<script>
+  // 1. Sinh userId duy nhất và lưu vào localStorage
+  function getOrCreateUserId() {
+    let userId = localStorage.getItem("userId");
+    if (!userId) {
+      userId = crypto.randomUUID(); // Tạo ID ngẫu nhiên
+      localStorage.setItem("userId", userId);
+    }
+    return userId;
+  }
+  const userId = getOrCreateUserId();
+
+  // 2. Kết nối WebSocket tới server
+  const socket = io("http://localhost:3001", {
+    transports: ["websocket"],
+  });
+
+  // 3. Khi kết nối, gửi userId cho server
+  socket.on("connect", () => {
+    socket.emit("join", { userId });
+  });
+
+  // 4. Khi đóng tab, báo cho server
+  window.addEventListener("beforeunload", () => {
+    socket.emit("leave", { userId });
+  });
+
+  // 5. Nhận số lượng user online từ server và hiển thị
+  socket.on("onlineCount", (count) => {
+    const counter = document.getElementById("online-counter");
+    if (counter) {
+      counter.innerText = `Online: ${count}`;
+    }
+  });
+</script>
+
+<!-- Div hiển thị số online ở góc phải dưới -->
+<div id="online-counter"
+     style="position: fixed; bottom: 10px; right: 10px;
+            background: rgba(0,0,0,0.7); color: white;
+            padding: 6px 12px; border-radius: 8px;
+            font-family: sans-serif; font-size: 14px; z-index: 9999;">
+   Online: 0
+</div>
+
 </body>
 </html>
