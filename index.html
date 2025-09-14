@@ -184,22 +184,29 @@ block-all-mixed-content;">
         // Function to determine status color class based on domain status
         const getStatusColorClass = (status) => {
             if (!status) return 'text-gray-600';
-            const lowerStatus = status.toLowerCase();
-            
-            if (lowerStatus.includes('ok') || lowerStatus.includes('active')) {
-                return 'text-black-600';
-            }
-            if (lowerStatus.includes('prohibited')) {
-                return 'text-green-600';
-            }
-            if (['pendingtransfer', 'pendingrenew', 'pendingupdate', 'addperiod', 'autorenewperiod', 'renewperiod', 'transferperiod'].some(s => lowerStatus.includes(s))) {
-                return 'text-yellow-600';
-            }
-            if (['clienthold', 'serverhold', 'inactive', 'pendingcreate', 'pendingrestore', 'redemptionperiod', 'pendingdelete'].some(s => lowerStatus.includes(s))) {
+            const s = status.toLowerCase();
+
+            if (['clienthold', 'serverhold', 'inactive', 'pendingcreate', 
+                'pendingrestore', 'redemptionperiod', 'pendingdelete'].some(x => s.includes(x))) {
                 return 'text-red-600';
             }
+
+            if (['pendingtransfer', 'pendingrenew', 'pendingupdate', 'addperiod', 
+                'autorenewperiod', 'renewperiod', 'transferperiod'].some(x => s.includes(x))) {
+                return 'text-yellow-600';
+            }
+
+            if (s.includes('prohibited')) {
+                return 'text-green-600';
+            }
+
+            if (s.includes('ok') || s.includes('active')) {
+                return 'text-black-600';
+            }
+
             return 'text-gray-600';
         };
+
 
         // Fetch SSL information từ API
         const fetchSSLInfo = async (domain) => {
