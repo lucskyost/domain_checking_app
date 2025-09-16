@@ -106,7 +106,7 @@ block-all-mixed-content;">
         // Function to clean domain input (xóa http/https prefix)
         const cleanDomainInput = (input) => {
             if (!input) return '';
-            
+    
             // Xóa http://, https://, www. và trailing slash
             let cleaned = input.trim()
                 .replace(/^https?:\/\//, '')
@@ -1417,7 +1417,6 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
     localStorage.setItem("userId", id);
     return id;
   })();
-
 
   const socket = io();
 
