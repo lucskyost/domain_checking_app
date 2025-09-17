@@ -652,7 +652,7 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                     ),
                                     _react2.default.createElement('div', { className: "space-y-4" },
                                         _react2.default.createElement('div', null,
-                                            _react2.default.createElement('label', { className: "block text-sm font-medium text-gray-700 mb-2" }, "Nhập domain, ví dụ: example.com (Users P.A Vietnam có thể nhập thêm email, số điện thoại hoặc mã câu hỏi):"),
+                                            _react2.default.createElement('label', { className: "block text-sm font-medium text-gray-700 mb-2" }, "Nhập domain, ví dụ: example.com (Users P.A Vietnam có thể nhập email, số điện thoại hoặc mã câu hỏi):"),
                                             _react2.default.createElement('style', null, `
                                                 input::placeholder {
                                                     color: rgba(55, 65, 81, 0.5);
@@ -718,6 +718,37 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                             )
                                         ),
 
+                                        /* Services and questions Search Link */
+                                        domainInput && (isAnalyzing || domainInfo) && (
+                                            // _react2.default.createElement('div', { className: "bg-white rounded-lg border border-green-200 p-4 shadow-sm" },
+                                            _react2.default.createElement('div', { className: "bg-white rounded-lg border border-green-200 p-4 shadow-sm" },
+                                                _react2.default.createElement('h3', { className: "text-md font-semibold text-gray-800 mb-2" }, "Tra cứu nhanh:"),
+                                                _react2.default.createElement('div', { className: "flex gap-2" },
+                                                    _react2.default.createElement('button', {
+                                                        onClick: () => openLink(`https://support.pavietnam.vn/index.php?pa=whois&tenormail=${domainInput}`),
+                                                        className: "flex items-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+                                                    },
+                                                        _react2.default.createElement(_lucidereact.ExternalLink, { className: "w-4 h-4 mr-1" }), "Dịch vụ"
+                                                    ),
+
+                                                    _react2.default.createElement('button', {
+                                                        onClick: () => openLink(`https://support.pavietnam.vn/index.php?pa=home&task=ten&tukhoa=${domainInput}&loaitukhoa=3`),
+                                                        className: "flex items-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+                                                    },
+                                                        _react2.default.createElement(_lucidereact.ExternalLink, { className: "w-4 h-4 mr-1" }), "Câu hỏi"
+                                                    ),
+
+                                                    _react2.default.createElement('button', {
+                                                        onClick: () => openLink(domainSearchLink),
+                                                        className: "flex items-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+                                                    },
+                                                        _react2.default.createElement(_lucidereact.ExternalLink, { className: "w-4 h-4 mr-1" }), "SSL đã mua"
+                                                    )
+                                    
+                                                )
+                                            )
+                                        ),
+
                                         /* Enhanced Progress Indicators */
                                         isAnalyzing && (
                                             _react2.default.createElement('div', { className: "bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 border border-blue-200 rounded-lg p-4 pulse-fast" },
@@ -759,6 +790,7 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                                 )
                                             )
                                         ),
+
 
                                         /* Domain Information */
                                         domainInfo && (
@@ -876,27 +908,7 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                             )
                                         ),
 
-                                        /* Services and questions Search Link */
-                                        domainInput && (isAnalyzing || domainInfo) && (
-                                            _react2.default.createElement('div', { className: "mt-6 bg-white rounded-lg border p-4" },
-                                                _react2.default.createElement('h3', { className: "text-md font-semibold text-gray-800 mb-2" }, "Tra cứu nhanh:"),
-                                                _react2.default.createElement('div', { className: "flex gap-2" },
-                                                    _react2.default.createElement('button', {
-                                                        onClick: () => openLink(`https://support.pavietnam.vn/index.php?pa=whois&tenormail=${domainInput}`),
-                                                        className: "flex items-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
-                                                    },
-                                                        _react2.default.createElement(_lucidereact.ExternalLink, { className: "w-4 h-4 mr-1" }), "Dịch vụ"
-                                                    ),
-                                                    _react2.default.createElement('button', {
-                                                        onClick: () => openLink(`https://support.pavietnam.vn/index.php?pa=home&task=ten&tukhoa=${domainInput}&loaitukhoa=3`),
-                                                        className: "flex items-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
-                                                    },
-                                                        _react2.default.createElement(_lucidereact.ExternalLink, { className: "w-4 h-4 mr-1" }), "Câu hỏi"
-                                                    )
-                                                )
-                                            )
-                                        ),
-
+ 
                                         /* SSL Information Panel */
                                         (sslInfo || (domainInfo && analysisProgress.ssl.loading)) && (
                                             _react2.default.createElement('div', { className: "mt-6" },
@@ -964,20 +976,20 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                             )
                                         ),
 
-                                        /* SSL Search Link */
-                                        domainSearchLink && (isAnalyzing || domainInfo) && (
-                                            _react2.default.createElement('div', { className: "mt-6 bg-white rounded-lg border p-4" },
-                                                _react2.default.createElement('h3', { className: "text-md font-semibold text-gray-800 mb-2" }, "Tìm kiếm SSL đã mua:"),
-                                                _react2.default.createElement('div', { className: "flex gap-2" },
-                                                    _react2.default.createElement('button', {
-                                                        onClick: () => openLink(domainSearchLink),
-                                                        className: "flex items-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
-                                                    },
-                                                        _react2.default.createElement(_lucidereact.ExternalLink, { className: "w-4 h-4 mr-1" }), "Mở tìm kiếm"
-                                                    )
-                                                )
-                                            )
-                                        ),
+                                        // /* SSL Search Link */
+                                        // domainSearchLink && (isAnalyzing || domainInfo) && (
+                                        //     _react2.default.createElement('div', { className: "mt-6 bg-white rounded-lg border p-4" },
+                                        //         _react2.default.createElement('h3', { className: "text-md font-semibold text-gray-800 mb-2" }, "Tìm kiếm SSL đã mua:"),
+                                        //         _react2.default.createElement('div', { className: "flex gap-2" },
+                                        //             _react2.default.createElement('button', {
+                                        //                 onClick: () => openLink(domainSearchLink),
+                                        //                 className: "flex items-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+                                        //             },
+                                        //                 _react2.default.createElement(_lucidereact.ExternalLink, { className: "w-4 h-4 mr-1" }), "Mở tìm kiếm"
+                                        //             )
+                                        //         )
+                                        //     )
+                                        // ),
 
                                         /* Instructions for Finding Order ID */
                                         domainSearchLink && (isAnalyzing || domainInfo) && (
@@ -1252,9 +1264,9 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                         /* Email Records Tab */
                         activeTab === 'emailRecords' && (
                             _react2.default.createElement('div', { className: "space-y-6" },
-                                _react2.default.createElement('div', { className: "bg-gradient-to-r from-pink-50 to-rose-100 border border-rose-200 rounded-lg p-6" },
+                                _react2.default.createElement('div', { className: "bg-gradient-to-r from-pink-50/40 to-rose-50/40 border border-rose-100 rounded-lg p-6" },
                                     _react2.default.createElement('div', { className: "flex items-center mb-4" },
-                                        _react2.default.createElement(_lucidereact.Mail, { className: "w-6 h-6 text-rose-700 mr-3" }),
+                                        _react2.default.createElement(_lucidereact.Mail, { className: "w-6 h-6 text-rose-600 mr-3" }),
                                         _react2.default.createElement('h2', { className: "text-xl font-bold text-rose-600" }, "Tạo Email DNS Records")
                                     ),
 
@@ -1289,6 +1301,7 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                                             _react2.default.createElement('th', { className: "px-4 py-2 text-center text-sm font-semibold text-gray-700 border" }, "Priority")
                                                         )
                                                     ),
+                                                    
                                                     _react2.default.createElement('tbody', null,
                                                         dnsRecords.map((record, idx) =>
                                                             _react2.default.createElement('tr', { key: idx, className: "hover:bg-gray-50" },
