@@ -98,6 +98,8 @@ block-all-mixed-content;">
             hosting: { loading: false, completed: false, error: null },
             ssl: { loading: false, completed: false, error: null }
         });
+        // const [abortController, setAbortController] = _react.useState(null);
+
         const [abortController, setAbortController] = _react.useState.call(void 0, null);
         
         const apiUrl = window.location.hostname === "localhost"
