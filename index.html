@@ -98,6 +98,7 @@ block-all-mixed-content;">
             hosting: { loading: false, completed: false, error: null },
             ssl: { loading: false, completed: false, error: null }
         });
+        const [abortController, setAbortController] = _react.useState.call(void 0, null);
         
         const apiUrl = window.location.hostname === "localhost"
     ? "http://localhost:3001"
@@ -224,10 +225,19 @@ block-all-mixed-content;">
 
             return 'text-gray-600';
         };
+        // Hàm fetch có timeout (15s)
+        const fetchWithTimeout = (url, options = {}, timeout = 15000) => {
+        const controller = new AbortController();
+        const id = setTimeout(() => controller.abort(), timeout);
+        return fetch(url, { ...options, signal: controller.signal })
+            .finally(() => clearTimeout(id));
+        };
+
+
         // Fetch SSL information từ API
-        const fetchSSLInfo = async (domain) => {
+        const fetchSSLInfo = async (domain, signal) => {
             try {
-                const response = await fetch(`${apiUrl}/api/ssl-summary/${domain}`);
+                const response = await fetch(`${apiUrl}/api/ssl-summary/${domain}`, { signal });
                 const data = await response.json();
                 console.log("SSL API response:", data);
 
@@ -261,9 +271,9 @@ block-all-mixed-content;">
         };
 
         // Lấy thông tin WHOIS từ proxy server
-        const fetchWhoisInfo = async (domain) => {
+        const fetchWhoisInfo = async (domain, signal) => {
             try {
-                const response = await fetch(`${apiUrl}/api/whois/${domain}`);
+                const response = await fetch(`${apiUrl}/api/whois/${domain}`, { signal });
                 const rawText = await response.text();
                 console.log("WHOIS raw:", rawText);
 
@@ -323,9 +333,9 @@ block-all-mixed-content;">
             }
         };
 
-        const fetchHostingInfo = async (domain) => {
+        const fetchHostingInfo = async (domain, signal) => {
             try {
-                const response = await fetch(`${apiUrl}/api/ip/${domain}`);
+                const response = await fetch(`${apiUrl}/api/ip/${domain}`, { signal });
                 const data = await response.json();
                 console.log("IP/Hosting raw:", data);
 
@@ -347,7 +357,11 @@ block-all-mixed-content;">
 
             const cleanedDomain = cleanDomainInput(domain);
             console.log("🔍 Analyzing domain:", cleanedDomain);
-            
+
+            // Tạo AbortController để có thể hủy request
+            const controller = new AbortController();
+            setAbortController(controller);
+                    
             // Reset states
             setIsAnalyzing(true);
             setDomainInfo(null);
@@ -378,7 +392,7 @@ block-all-mixed-content;">
             // Chạy TẤT CẢ các API song song
             const promises = [
                 // WHOIS Promise
-                fetchWhoisInfo(cleanedDomain).then(whoisInfo => {
+                fetchWhoisInfo(cleanedDomain, controller.signal).then(whoisInfo => {
                     setDomainInfo(prev => ({
                         ...prev,
                         registrar: whoisInfo.registrar,
@@ -400,7 +414,7 @@ block-all-mixed-content;">
                 }),
 
                 // Hosting Promise
-                fetchHostingInfo(cleanedDomain).then(hostingInfo => {
+                fetchHostingInfo(cleanedDomain, controller.signal).then(hostingInfo => {
                     setDomainInfo(prev => ({
                         ...prev,
                         ip: hostingInfo.ip,
@@ -421,7 +435,7 @@ block-all-mixed-content;">
                 }),
 
                 // SSL Promise
-                fetchSSLInfo(cleanedDomain).then(sslData => {
+                fetchSSLInfo(cleanedDomain, controller.signal).then(sslData => {
                     setSslInfo(sslData);
                     
                     setAnalysisProgress(prev => ({
@@ -442,6 +456,7 @@ block-all-mixed-content;">
                 console.error('Analysis error:', err);
             } finally {
                 setIsAnalyzing(false);
+                setAbortController(null);   // clean controller khi xong
             }
         };
 
@@ -714,7 +729,16 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                                             _react2.default.createElement('div', { className: "ultra-fast-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" }),
                                                             "Đang phân tích..."
                                                         ) : "Phân tích"
-                                                )
+                                                ),
+                                                //Thêm nút Dừng ngay sau nút Phân tích
+                                                isAnalyzing && _react2.default.createElement('button', {
+                                                    onClick: () => {
+                                                        if (abortController) abortController.abort();
+                                                        setIsAnalyzing(false);
+                                                        setAbortController(null);
+                                                    },
+                                                    className: "px-6 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                                                }, "Dừng")
                                             )
                                         ),
 
