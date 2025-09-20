@@ -1002,28 +1002,13 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                             )
                                         ),
 
-                                        // /* SSL Search Link */
-                                        // domainSearchLink && (isAnalyzing || domainInfo) && (
-                                        //     _react2.default.createElement('div', { className: "mt-6 bg-white rounded-lg border p-4" },
-                                        //         _react2.default.createElement('h3', { className: "text-md font-semibold text-gray-800 mb-2" }, "Tìm kiếm SSL đã mua:"),
-                                        //         _react2.default.createElement('div', { className: "flex gap-2" },
-                                        //             _react2.default.createElement('button', {
-                                        //                 onClick: () => openLink(domainSearchLink),
-                                        //                 className: "flex items-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
-                                        //             },
-                                        //                 _react2.default.createElement(_lucidereact.ExternalLink, { className: "w-4 h-4 mr-1" }), "Mở tìm kiếm"
-                                        //             )
-                                        //         )
-                                        //     )
-                                        // ),
-
                                         /* Instructions for Finding Order ID */
                                         domainSearchLink && (isAnalyzing || domainInfo) && (
-                                            _react2.default.createElement('div', { className: "mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4" },
+                                            _react2.default.createElement('div', { className: "mt-6 bg-emerald-50 border border-emerald-200 rounded-lg p-4" },
                                                 _react2.default.createElement('div', { className: "flex items-start" },
-                                                    _react2.default.createElement(_lucidereact.AlertCircle, { className: "w-5 h-5 text-yellow-600 mt-0.5 mr-2 flex-shrink-0" }),
-                                                    _react2.default.createElement('div', { className: "text-sm text-yellow-800" },
-                                                        _react2.default.createElement('p', { className: "font-semibold mb-1" }, "Hướng dẫn tìm Order ID mới nhất:"),
+                                                    _react2.default.createElement(_lucidereact.AlertCircle, { className: "w-5 h-5 text-emerald-600 mt-0.5 mr-2 flex-shrink-0" }),
+                                                    _react2.default.createElement('div', { className: "text-sm text-emerald-800" },
+                                                        _react2.default.createElement('p', { className: "text-lg font-semibold mb-1" }, "Hướng dẫn tìm Order ID mới nhất:"),
                                                         _react2.default.createElement('p', null, "1. Mở link tìm kiếm để xem danh sách SSL của domain"),
                                                         _react2.default.createElement('p', null, "2. Tìm dòng có STT = 1 (dòng đầu tiên) - đây là Order ID mới nhất"),
                                                         _react2.default.createElement('p', null, "3. Copy link Order ID từ cột \"Order ID\" trong dòng đó"),
@@ -1031,9 +1016,7 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                                     )
                                                 )
                                             )
-                                        ),
-
-                                        /* SSL Renewal Notice Template */
+                                        ),                                      /* SSL Renewal Notice Template */
                                         sslInfo && sslInfo.exists && sslInfo.days_remaining >= 30 && (
                                             _react2.default.createElement('div', { className: "mt-6 bg-emerald-50 border border-emerald-200 rounded-lg p-4" },
                                                 _react2.default.createElement('div', { className: "flex items-center mb-3" },
@@ -1056,7 +1039,7 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                         ),
 
 
-                                        
+
                                         /* Domain/DNS Notice Template */
                                         domainSearchLink && (isAnalyzing || domainInfo) && (
                                             _react2.default.createElement('div', { className: "mt-6 bg-emerald-50 border border-emerald-200 rounded-lg p-4" },
