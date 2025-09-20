@@ -745,37 +745,34 @@ Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý 
                                             )
                                         ),
 
-                                        /* Services and questions Search Link */
+                                        /* Services, questions, SSL Search Link */
                                         domainInput && (isAnalyzing || domainInfo) && (
-                                            // _react2.default.createElement('div', { className: "bg-white rounded-lg border border-green-200 p-4 shadow-sm" },
-                                            _react2.default.createElement('div', { className: "bg-white rounded-lg border border-green-200 p-4 shadow-sm" },
-                                                _react2.default.createElement('h3', { className: "text-md font-semibold text-gray-800 mb-2" }, "Tra cứu nhanh:"),
-                                                _react2.default.createElement('div', { className: "flex gap-2" },
-                                                    _react2.default.createElement('button', {
-                                                        onClick: () => openLink(`https://support.pavietnam.vn/index.php?pa=whois&tenormail=${domainInput}`),
-                                                        className: "flex items-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
-                                                    },
-                                                        _react2.default.createElement(_lucidereact.ExternalLink, { className: "w-4 h-4 mr-1" }), "Dịch vụ"
-                                                    ),
-
-                                                    _react2.default.createElement('button', {
-                                                        onClick: () => openLink(`https://support.pavietnam.vn/index.php?pa=home&task=ten&tukhoa=${domainInput}&loaitukhoa=3`),
-                                                        className: "flex items-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
-                                                    },
-                                                        _react2.default.createElement(_lucidereact.ExternalLink, { className: "w-4 h-4 mr-1" }), "Câu hỏi"
-                                                    ),
-
-                                                    _react2.default.createElement('button', {
-                                                        onClick: () => openLink(domainSearchLink),
-                                                        className: "flex items-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
-                                                    },
-                                                        _react2.default.createElement(_lucidereact.ExternalLink, { className: "w-4 h-4 mr-1" }), "SSL đã mua"
-                                                    )
-                                    
-                                                )
+                                        _react2.default.createElement('div', { 
+                                            className: `rounded-lg border p-4 shadow-sm ${isAnalyzing ? 'bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 border-blue-200 pulse-fast' : 'bg-white border-green-200'}` 
+                                        },
+                                            _react2.default.createElement('h3', { className: "text-md font-semibold text-gray-800 mb-2" }, "Tra cứu nhanh:"),
+                                            _react2.default.createElement('div', { className: "flex gap-2" },
+                                            _react2.default.createElement('button', {
+                                                onClick: () => openLink(`https://support.pavietnam.vn/index.php?pa=whois&tenormail=${domainInput}`),
+                                                className: "flex items-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+                                            },
+                                                _react2.default.createElement(_lucidereact.ExternalLink, { className: "w-4 h-4 mr-1" }), "Dịch vụ"
+                                            ),
+                                            _react2.default.createElement('button', {
+                                                onClick: () => openLink(`https://support.pavietnam.vn/index.php?pa=home&task=ten&tukhoa=${domainInput}&loaitukhoa=3`),
+                                                className: "flex items-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+                                            },
+                                                _react2.default.createElement(_lucidereact.ExternalLink, { className: "w-4 h-4 mr-1" }), "Câu hỏi"
+                                            ),
+                                            _react2.default.createElement('button', {
+                                                onClick: () => openLink(domainSearchLink),
+                                                className: "flex items-center px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+                                            },
+                                                _react2.default.createElement(_lucidereact.ExternalLink, { className: "w-4 h-4 mr-1" }), "SSL đã mua"
                                             )
-                                        ),
-
+                                            )
+                                        )
+                                    ),
                                         /* Enhanced Progress Indicators */
                                         isAnalyzing && (
                                             _react2.default.createElement('div', { className: "bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 border border-blue-200 rounded-lg p-4 pulse-fast" },
