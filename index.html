@@ -331,7 +331,7 @@ block-all-mixed-content;">
                 return { registrar, owner, status, nameservers, issueDate, expiredDate, raw: cleanText };
             } catch (err) {
                 console.error('WHOIS fetch error:', err);
-                return { registrar: 'Error', owner: '', status: '', nameservers: [], issueDate: '', expiredDate: '', raw: '' };
+                return { registrar: 'N/A', owner: '', status: '', nameservers: [], issueDate: '', expiredDate: '', raw: '' };
             }
         };
 
