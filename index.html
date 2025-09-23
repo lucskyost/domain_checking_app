@@ -226,7 +226,13 @@ const extractDomainFromCert = (certPem) => {
 const handleConvertToPfx = () => {
     try {
         setPfxError('');
-   
+
+        // Check if forge is available
+        if (typeof forge === 'undefined' || !forge.pki) {
+            setPfxError('Forge library chưa được tải. Vui lòng refresh trang.');
+            return;
+        }
+        
         // Validate required fields
         if (!pfxPrivateKey.trim()) {
             setPfxError('Private Key là bắt buộc');
