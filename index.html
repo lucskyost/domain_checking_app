@@ -218,11 +218,7 @@ const extractDomainFromCert = (certPem) => {
 const handleConvertToPfx = () => {
     try {
         setPfxError('');
-
-        if (!forge || !forge.pki) {
-            setPfxError("Forge chưa sẵn sàng, kiểm tra lại script CDN!");
-            return;
-        }        
+   
         // Validate required fields
         if (!pfxPrivateKey.trim()) {
             setPfxError('Private Key là bắt buộc');
