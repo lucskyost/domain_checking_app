@@ -70,9 +70,8 @@ block-all-mixed-content;">
     var _react = require('react');
     var _react2 = _interopRequireDefault(_react);
     var _lucidereact = require('lucide-react');
-    var forge = window.forge;
+    const forge = window.forge;
     
-
     function SSLTool() {
 
         // PFX Convert states
@@ -255,7 +254,12 @@ const handleConvertToPfx = () => {
         );
         
         const p12Der = forge.asn1.toDer(p12Asn1).getBytes();
-        const p12Blob = new Blob([forge.util.binary.raw.decode(p12Der)], { type: 'application/x-pkcs12' });
+        const p12Buffer = new Uint8Array(p12Der.length);
+        for (let i = 0; i < p12Der.length; i++) {
+        p12Buffer[i] = p12Der.charCodeAt(i);
+        }
+        const p12Blob = new Blob([p12Buffer], { type: 'application/x-pkcs12' });
+
         
         // Get domain name for filename
         const domainName = extractDomainFromCert(pfxCertificate.trim());
