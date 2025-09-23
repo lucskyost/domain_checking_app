@@ -64,12 +64,58 @@ block-all-mixed-content;">
 <script src="https://puc.poecdn.net/authenticated_preview_page/exports.b0f0f482cdeb5302b0b9.js"></script>
 <script src="https://puc.poecdn.net/authenticated_preview_page/renderer.75c73ae6b4235f62945a.js"></script>
 <script src="https://unpkg.com/node-forge@1.3.1/dist/forge.min.js"></script>
+
 <script>
-// Add this check to ensure forge is loaded
-if (typeof forge === 'undefined') {
-    console.error('Forge library failed to load');
-} else {
-    console.log('Forge library loaded successfully');
+function loadForge(callback) {
+    if (typeof forge !== 'undefined') {
+        console.log('Forge already loaded');
+        if (callback) callback();
+        return;
+    }
+
+    // Thử unpkg trước (ổn định)
+    let loaded = false;
+    const script = document.createElement('script');
+    script.src = 'https://unpkg.com/node-forge@1.3.1/dist/forge.min.js';
+    script.onload = function() {
+        if (typeof forge !== 'undefined' && !loaded) {
+            loaded = true;
+            console.log('Forge loaded via unpkg');
+            if (callback) callback();
+        }
+    };
+    script.onerror = function() {
+        if (loaded) return;
+        // Fallback: Thử cdnjs (CDN khác, ổn ở VN)
+        const fallbackScript = document.createElement('script');
+        fallbackScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/forge/1.3.1/forge.min.js';
+        fallbackScript.onload = function() {
+            if (typeof forge !== 'undefined') {
+                console.log('Forge loaded via cdnjs fallback');
+                if (callback) callback();
+            }
+        };
+        fallbackScript.onerror = function() {
+            console.error('Failed to load Forge from all CDNs');
+        };
+        document.head.appendChild(fallbackScript);
+    };
+    document.head.appendChild(script);
+}
+
+// Tự động tải khi trang load
+window.addEventListener('load', function() {
+    loadForge();
+});
+</script>
+
+<script>
+if (typeof forge === 'undefined' || !forge.pki) {
+    loadForge(function() {
+        handleConvertToPfx(); // Thử lại sau khi load
+    });
+    setPfxError('Đang tải Forge... Thử lại sau 2 giây.');
+    return;
 }
 </script>
 <script>
