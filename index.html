@@ -74,7 +74,7 @@ block-all-mixed-content;">
 
     function SSLTool() {
 
-        const forge = window.forge || require('node-forge');
+        const forge = window.forge;
         // PFX Convert states
         const [pfxPrivateKey, setPfxPrivateKey] = _react.useState.call(void 0, '');
         const [pfxCertificate, setPfxCertificate] = _react.useState.call(void 0, '');
