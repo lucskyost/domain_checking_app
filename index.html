@@ -110,13 +110,13 @@ window.addEventListener('load', function() {
 </script>
 
 <script>
-if (typeof forge === 'undefined' || !forge.pki) {
-    loadForge(function() {
-        handleConvertToPfx(); // Thử lại sau khi load
-    });
-    setPfxError('Đang tải Forge... Thử lại sau 2 giây.');
-    return;
-}
+    if (typeof forge === 'undefined' || !forge.pki) {
+        loadForge(function() {
+            handleConvertToPfx(); // Thử lại sau khi load
+        });
+        setPfxError('Đang tải Forge... Thử lại sau 2 giây.');
+        return;
+    }
 </script>
 <script>
     Object.defineProperty(exports, "__esModule", {value: true});
