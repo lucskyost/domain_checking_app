@@ -1,0 +1,1366 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html>
+<head>
+<meta name="x-poe-datastore-behavior" content="local_only">
+<meta http-equiv="Content-Security-Policy" content="
+default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com;
+connect-src 'self' http://localhost:3001 http://ip-api.com https://ssl-checker.io https://whois.net.vn;
+frame-src 'self' https://www.youtube.com https://trytako.com;
+child-src 'self';
+manifest-src 'self';
+worker-src 'self';
+upgrade-insecure-requests;
+block-all-mixed-content;">
+<meta http-equiv="x-dns-prefetch-control" content="off">
+<meta name="x-poe-allow-downloads" content="true">
+<script src="https://puc.poecdn.net/authenticated_preview_page/standard.3ef2c256959faf5a756d.js"></script>
+<meta charset="utf-8">
+<title>Domain Checking</title>
+<link rel="icon" type="image/png" href="domainCheckingAppLogo.png">
+<link rel="shortcut icon" type="image/png" href="domainCheckingAppLogo.png">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<script src="https://puc.poecdn.net/authenticated_preview_page/disableWebRTC.9710cebe07429a9e8e06.js"></script>
+<script src="https://puc.poecdn.net/authenticated_preview_page/tw.b9024aecac666455e183.js"></script>
+<script src="https://puc.poecdn.net/authenticated_preview_page/deps.faccd16000d314dc16d5.js"></script>
+<script src="https://puc.poecdn.net/authenticated_preview_page/exports.b0f0f482cdeb5302b0b9.js"></script>
+<script src="https://puc.poecdn.net/authenticated_preview_page/renderer.75c73ae6b4235f62945a.js"></script>
+<script>
+    Object.defineProperty(exports, "__esModule", {value: true});
+    function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+    var _react = require('react');
+    var _react2 = _interopRequireDefault(_react);
+    var _lucidereact = require('lucide-react');
+
+    function SSLTool() {
+        const [activeTab, setActiveTab] = _react.useState.call(void 0, 'domain');
+        const [domainInput, setDomainInput] = _react.useState.call(void 0, '');
+        const [domainInfo, setDomainInfo] = _react.useState.call(void 0, null);
+        const [sslRequestLink, setSslRequestLink] = _react.useState.call(void 0, '');
+        const [domainManagementLink, setDomainManagementLink] = _react.useState.call(void 0, '');
+        const [inputLink, setInputLink] = _react.useState.call(void 0, '');
+        const [extractedId, setExtractedId] = _react.useState.call(void 0, '');
+        const [sslLinks, setSslLinks] = _react.useState.call(void 0, {});
+        const [privateKey, setPrivateKey] = _react.useState.call(void 0, '');
+        const [certificate, setCertificate] = _react.useState.call(void 0, '');
+        const [caRoot, setCaRoot] = _react.useState.call(void 0, '');
+        const [formattedText, setFormattedText] = _react.useState.call(void 0, '');
+        const [copied, setCopied] = _react.useState.call(void 0, {});
+        const [domainSearchLink, setDomainSearchLink] = _react.useState.call(void 0, '');
+        const [copiedDomainSearch, setCopiedDomainSearch] = _react.useState.call(void 0, false);
+        const [sslInfo, setSslInfo] = _react.useState.call(void 0, null);
+
+        const [ipInput, setIpInput] = _react.useState.call(void 0, '');
+        const [dnsRecords, setDnsRecords] = _react.useState.call(void 0, []);
+
+        // Thêm states cho việc theo dõi tiến trình phân tích
+        const [isAnalyzing, setIsAnalyzing] = _react.useState.call(void 0, false);
+        const [analysisProgress, setAnalysisProgress] = _react.useState.call(void 0, {
+            whois: { loading: false, completed: false, error: null },
+            hosting: { loading: false, completed: false, error: null },
+            ssl: { loading: false, completed: false, error: null }
+        });
+        
+        const apiUrl = window.location.hostname === "localhost"
+    ? "http://localhost:3001"
+    : window.location.origin;
+
+        // Function to clean domain input (xóa http/https prefix)
+        const cleanDomainInput = (input) => {
+            if (!input) return '';
+            
+            // Xóa http://, https://, www. và trailing slash
+            let cleaned = input.trim()
+                .replace(/^https?:\/\//, '')
+                .replace(/\/$/, '');
+                
+            // Nếu có path sau domain, chỉ lấy phần domain
+            const pathIndex = cleaned.indexOf('/');
+            if (pathIndex > 0) {
+                cleaned = cleaned.substring(0, pathIndex);
+            }
+            
+            return cleaned;
+        };
+        
+        // Function to generate SSL search link
+        const generateDomainSearchLink = (domain) => {
+            if (!domain) return '';
+            const cleanDomain = cleanDomainInput(domain);
+            return `https://support.pavietnam.vn/index.php?pa=hangdoissl&domain=${cleanDomain}`;
+        };
+
+        // Handle domain input change với auto-clean
+        const handleDomainInputChange = (e) => {
+            const rawInput = e.target.value;
+            const cleanedDomain = cleanDomainInput(rawInput);
+            setDomainInput(cleanedDomain);
+            setDomainSearchLink(generateDomainSearchLink(cleanedDomain));
+        };
+
+        // Handle Enter key press
+        const handleKeyPress = (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const cleanedDomain = cleanDomainInput(domainInput);
+                if (cleanedDomain) {
+                    analyzeDomain(cleanedDomain);
+                }
+            }
+        };
+        // Function generate records
+        const handleGenerateRecords = () => {
+            if (!ipInput) return;
+
+            const parts = ipInput.trim().split(".");
+            if (parts.length !== 4) return;
+
+            const suffix = parts[2] + parts[3]; // Ghép 2 octet cuối
+
+            const records = [
+            { name: "mail", type: "CNAME", value: `mail${suffix}.maychuemail.com`, priority: "" },
+            { name: "mx", type: "CNAME", value: `mx${suffix}.maychuemail.net`, priority: "" },
+            { name: "@", type: "MX", value: `mail${suffix}.maychuemail.com`, priority: "5" },
+            { name: "@", type: "MX", value: `mx${suffix}.maychuemail.net`, priority: "10" },
+            { name: "@", type: "TXT", value: `v=spf1 a mx include:spf.maychuemail.com -all`, priority: "" },
+            { name: "dkim._domainkey", type: "CNAME", value: `dkim1.maychuemail.com`, priority: "" },
+            { name: "_dmarc", type: "TXT", value: `v=DMARC1; p=reject; adkim=r; aspf=s; sp=none`, priority: "" },
+            ];
+
+            setDnsRecords(records);
+        };
+        // Function to format date (mới thêm để định dạng ngày tháng dễ đọc)
+        const formatDate = (dateString) => {
+            if (!dateString) return '';
+            try {
+                const d = new Date(dateString);
+                const y = d.getFullYear();
+                const m = String(d.getMonth() + 1).padStart(2, '0');
+                const day = String(d.getDate()).padStart(2, '0');
+                return `${y}/${m}/${day}`;   // yyyy/mm/dd
+            } catch (err) {
+                return dateString;
+            }
+        };
+
+        // Function to determine status color class based on domain status
+        const getStatusColorClass = (status) => {
+            if (!status) return 'text-gray-600';
+            const lowerStatus = status.toLowerCase();
+            
+            if (lowerStatus.includes('ok') || lowerStatus.includes('active')) {
+                return 'text-black-600';
+            }
+            if (lowerStatus.includes('prohibited')) {
+                return 'text-green-600';
+            }
+            if (['pendingtransfer', 'pendingrenew', 'pendingupdate', 'addperiod', 'autorenewperiod', 'renewperiod', 'transferperiod'].some(s => lowerStatus.includes(s))) {
+                return 'text-yellow-600';
+            }
+            if (['clienthold', 'serverhold', 'inactive', 'pendingcreate', 'pendingrestore', 'redemptionperiod', 'pendingdelete'].some(s => lowerStatus.includes(s))) {
+                return 'text-red-600';
+            }
+            return 'text-gray-600';
+        };
+
+        // Fetch SSL information từ API
+        const fetchSSLInfo = async (domain) => {
+            try {
+                const response = await fetch(`${apiUrl}/api/ssl-summary/${domain}`);
+                const data = await response.json();
+                console.log("SSL API response:", data);
+
+                if (data.error) {
+                    return {
+                        exists: false,
+                        error: data.error
+                    };
+                }
+
+                return {
+                    exists: true,
+                    domain: data.domain,
+                    ip: data.ip,
+                    issued_to: data.issued_to,
+                    issued_org: data.issued_org,
+                    issuer_cn: data.issuer_cn,
+                    issuer_org: data.issuer_org,
+                    valid_from: data.valid_from,
+                    valid_to: data.valid_to,
+                    days_remaining: data.days_remaining,
+                    is_valid: data.is_valid
+                };
+            } catch (err) {
+                console.error('SSL fetch error:', err);
+                return {
+                    exists: false,
+                    error: 'Không thể kết nối tới SSL API'
+                };
+            }
+        };
+
+        // Lấy thông tin WHOIS từ proxy server
+        const fetchWhoisInfo = async (domain) => {
+            try {
+                const response = await fetch(`${apiUrl}/api/whois/${domain}`);
+                const rawText = await response.text();
+                console.log("WHOIS raw:", rawText);
+
+                // Làm sạch HTML thành text
+                const cleanText = rawText
+                    .replace(/<br\s*\/?>/gi, "\n")
+                    .replace(/<.*?>/g, '')
+                    .trim();
+
+                const getMatch = (regex) => {
+                    const match = cleanText.match(regex);
+                    return match ? match[1].trim() : '';
+                };
+
+                // Lấy Registrar
+                const registrar =
+                    getMatch(/Registrar Name\s*:\s*(.+)/i) ||
+                    getMatch(/Registrar:\s*(.+)/i);
+
+                // Lấy Owner
+                const owner =
+                    getMatch(/Owner Name\s*:\s*(.+)/i) ||
+                    getMatch(/Registrant Organization\s*:\s*(.+)/i) ||
+                    getMatch(/Registrant:\s*(.+)/i);
+
+                // Lấy Status
+                const status =
+                    getMatch(/Status\s*:\s*(.+)/i) ||
+                    getMatch(/Domain Status:\s*(.+)/i);
+
+                // Lấy Issue Date
+                const issueDate =
+                    getMatch(/Issue Date\s*:\s*(.+)/i) ||
+                    getMatch(/Creation Date\s*:\s*(.+)/i);
+
+                // Lấy Expired Date
+                const expiredDate =
+                    getMatch(/Expired Date\s*:\s*(.+)/i) ||
+                    getMatch(/Registry Expiry Date\s*:\s*(.+)/i);
+
+                // Lấy Nameservers
+                let nameservers = [];
+                const nsMatches = cleanText.match(/Name Server:\s*(.+)/gi);
+                if (nsMatches) {
+                    nameservers = nsMatches.map(ns => ns.split(':')[1].trim());
+                } else {
+                    const dnsRaw = getMatch(/DNS\s*:\s*(.+)/i);
+                    if (dnsRaw) {
+                        nameservers = dnsRaw.split(',').map(ns => ns.trim()).filter(Boolean);
+                    }
+                }
+
+                return { registrar, owner, status, nameservers, issueDate, expiredDate, raw: cleanText };
+            } catch (err) {
+                console.error('WHOIS fetch error:', err);
+                return { registrar: 'Error', owner: '', status: '', nameservers: [], issueDate: '', expiredDate: '', raw: '' };
+            }
+        };
+
+        const fetchHostingInfo = async (domain) => {
+            try {
+                const response = await fetch(`${apiUrl}/api/ip/${domain}`);
+                const data = await response.json();
+                console.log("IP/Hosting raw:", data);
+
+                return {
+                    ip: data.query || '',
+                    country: data.country || '',
+                    as: data.as || '',
+                    isp: data.isp || ''
+                };
+            } catch (err) {
+                console.error('IP/Hosting fetch error:', err);
+                return { ip: '', country: '', as: '', isp: '' };
+            }
+        };
+
+        // Enhanced analyze function với parallel execution
+        const analyzeDomain = async (domain) => {
+            if (!domain || typeof domain !== 'string') return;
+
+            const cleanedDomain = cleanDomainInput(domain);
+            console.log("🔍 Analyzing domain:", cleanedDomain);
+            
+            // Reset states
+            setIsAnalyzing(true);
+            setDomainInfo(null);
+            setSslInfo(null);
+            setAnalysisProgress({
+                whois: { loading: true, completed: false, error: null },
+                hosting: { loading: true, completed: false, error: null },
+                ssl: { loading: true, completed: false, error: null }
+            });
+
+            // Tạo base domain info ngay lập tức
+            const baseDomainInfo = {
+                domain: cleanedDomain,
+                registrar: '',
+                status: '',
+                nameservers: [],
+                ip: '',
+                country: '',
+                as: '',
+                isp: '',
+                issueDate: '',
+                expiredDate: '',
+                ssl: null
+            };
+            
+            setDomainInfo(baseDomainInfo);
+
+            // Chạy TẤT CẢ các API song song
+            const promises = [
+                // WHOIS Promise
+                fetchWhoisInfo(cleanedDomain).then(whoisInfo => {
+                    setDomainInfo(prev => ({
+                        ...prev,
+                        registrar: whoisInfo.registrar,
+                        status: whoisInfo.status,
+                        nameservers: whoisInfo.nameservers,
+                        issueDate: whoisInfo.issueDate,
+                        expiredDate: whoisInfo.expiredDate
+                    }));
+                    
+                    setAnalysisProgress(prev => ({
+                        ...prev,
+                        whois: { loading: false, completed: true, error: null }
+                    }));
+                }).catch(err => {
+                    setAnalysisProgress(prev => ({
+                        ...prev,
+                        whois: { loading: false, completed: false, error: err.message }
+                    }));
+                }),
+
+                // Hosting Promise
+                fetchHostingInfo(cleanedDomain).then(hostingInfo => {
+                    setDomainInfo(prev => ({
+                        ...prev,
+                        ip: hostingInfo.ip,
+                        country: hostingInfo.country,
+                        as: hostingInfo.as,
+                        isp: hostingInfo.isp
+                    }));
+                    
+                    setAnalysisProgress(prev => ({
+                        ...prev,
+                        hosting: { loading: false, completed: true, error: null }
+                    }));
+                }).catch(err => {
+                    setAnalysisProgress(prev => ({
+                        ...prev,
+                        hosting: { loading: false, completed: false, error: err.message }
+                    }));
+                }),
+
+                // SSL Promise
+                fetchSSLInfo(cleanedDomain).then(sslData => {
+                    setSslInfo(sslData);
+                    
+                    setAnalysisProgress(prev => ({
+                        ...prev,
+                        ssl: { loading: false, completed: true, error: null }
+                    }));
+                }).catch(err => {
+                    setAnalysisProgress(prev => ({
+                        ...prev,
+                        ssl: { loading: false, completed: false, error: err.message }
+                    }));
+                })
+            ];
+
+            try {
+                await Promise.allSettled(promises);
+            } catch (err) {
+                console.error('Analysis error:', err);
+            } finally {
+                setIsAnalyzing(false);
+            }
+        };
+
+        const getResponseText = (registrar, hosting, nameservers) => {
+            const isPARegistrar = registrar === 'P.A. Viet Nam Company Limited';
+            const isSuperDataHosting = hosting === 'SUPERDATA-VN';
+            const isPANameserver = nameservers.some(ns => 
+                ns.includes('pavietnam.vn') || ns.includes('pavietnam.net')
+            );
+
+            if (!isPARegistrar && !isSuperDataHosting) {
+                return `Quý khách tham khảo hướng dẫn sau để chủ động tự Đăng ký/Gia hạn kích hoạt chứng chỉ SSL trên tài khoản support:
+
+https://kb.pavietnam.vn/kich-hoat-va-quan-ly-ssl.html
+
+Nếu Quý khách gặp khó khăn hay vấn đề trong việc kích hoạt SSL, Quý khách vui lòng phản hồi lại mã câu hỏi để chúng tôi có thể hỗ trợ. Sau khi thành công và nhận chứng chỉ Quý khách có thể cài đặt vào dịch vụ.
+
+Trong trường hợp, Quý khách ủy quyền P.A thực hiện thay việc Đăng ký/Gia hạn kích hoạt hoặc tích hợp vào dịch vụ Quý khách phản hồi: Tôi đồng ý để P.A được uy quyền cho phép kích hoạt chứng chỉ SSL(nếu tên miền được quản lý nơi khác chúng tôi sẽ cần sự phối hợp thêm từ Quý khách). Kỹ thuật sẽ tiến hành các bước tiếp theo sau khi nhận được xác nhận. Quá trình kỹ thuật tiến hành đăng ký SSL cần xác thực do đó phía kỹ thuật sẽ chủ động thực hiện 1 trong các cập nhật thay đổi sau để hoàn tất bước xác thực SSL 
+
+Thêm cấu hình DNS tên miền (thời gian nhanh)
+Tạo thêm địa chỉ email admin@ hoặc administrator@
+Tạo thêm file txt trên web
+
+Trong trường hợp, Quý khách hàng không phản hồi lại hoặc không thực hiện theo hướng dẫn, có thể dẫn tới việc tiến trình đăng ký không được thực hiện hoàn tất và chúng tôi xin phép được miễn trừ trách nhiệm. Mong nhận được sự hỗ trợ và hợp tác của Quý khách và cảm ơn Quý khách đă đăng ký sử dụng dịch vụ.`;
+            }
+
+            if (isPARegistrar && !isSuperDataHosting && !isPANameserver) {
+                return `Quý khách tham khảo hướng dẫn sau để chủ động tự Đăng ký/Gia hạn kích hoạt chứng chỉ SSL trên tài khoản support:
+
+https://kb.pavietnam.vn/kich-hoat-va-quan-ly-ssl.html
+
+Nếu Quý khách gặp khó khăn hay vấn đề trong việc kích hoạt SSL, Quý khách vui lòng phản hồi lại mã câu hỏi để chúng tôi có thể hỗ trợ. Sau khi thành công và nhận chứng chỉ Quý khách có thể cài đặt vào dịch vụ.
+
+Trong trường hợp, Quý khách ủy quyền P.A thực hiện thay việc Đăng ký/Gia hạn kích hoạt hoặc tích hợp vào dịch vụ Quý khách phản hồi: Tôi đồng ý để P.A được uy quyền cho phép kích hoạt chứng chỉ SSL(nếu tên miền được quản lý nơi khác chúng tôi sẽ cần sự phối hợp thêm từ Quý khách). Kỹ thuật sẽ tiến hành các bước tiếp theo sau khi nhận được xác nhận. Quá trình kỹ thuật tiến hành đăng ký SSL cần xác thực do đó phía kỹ thuật sẽ chủ động thực hiện 1 trong các cập nhật thay đổi sau để hoàn tất bước xác thực SSL 
+
+Thêm cấu hình DNS tên miền (thời gian nhanh)
+Tạo thêm địa chỉ email admin@ hoặc administrator@
+Tạo thêm file txt trên web
+
+Trong trường hợp, Quý khách hàng không phản hồi lại hoặc không thực hiện theo hướng dẫn, có thể dẫn tới việc tiến trình đăng ký không được thực hiện hoàn tất và chúng tôi xin phép được miễn trừ trách nhiệm. Mong nhận được sự hỗ trợ và hợp tác của Quý khách và cảm ơn Quý khách đă đăng ký sử dụng dịch vụ.`;
+            }
+
+            if (!isPARegistrar && isSuperDataHosting) {
+                return "Cân nhắc cấu hình xác thực SSL qua file base vì hosting đặt tại PA Vietnam";
+            }
+
+            if (isPARegistrar && isSuperDataHosting) {
+                return "Cần nhập link SSL request để tạo link quản trị domain cho xác thực DNS.";
+            }
+
+            return "Trường hợp đặc biệt, vui lòng kiểm tra thủ công.";
+        };
+
+        const processSSLRequestLink = () => {
+            if (!sslRequestLink) return;
+            
+            const authMatch = sslRequestLink.match(/auth=([a-f0-9]+)/);
+            if (!authMatch) return;
+            
+            const auth = authMatch[1];
+            const domain = domainInput.replace(/^[^.]+\./, '');
+            
+            const mockId = '294574';
+            const managementLink = `https://support.pavietnam.vn/index.php?pa=dnsvn&idaccount=${mockId}`;
+            setDomainManagementLink(managementLink);
+        };
+
+        const extractIdFromLink = (link) => {
+            const match = link.match(/id=(\d+)/);
+            return match ? match[1] : '';
+        };
+
+        const generateSSLLinks = (id) => {
+            const baseUrl = 'https://support.pavietnam.vn/index.php?pa=ssl-helper';
+            return {
+                order: `${baseUrl}&act=orderDetail&id=${id}`,
+                register: `${baseUrl}&act=requestRegisterSsl&id=${id}&action=register`,
+                renew: `${baseUrl}&act=requestRegisterSsl&id=${id}&action=renew`,
+                download: `https://support.pavietnam.vn/?pa=ssl-helper&act=downloadCert&id=${id}`
+            };
+        };
+
+        const handleSSLLinkInput = (e) => {
+            const link = e.target.value;
+            setInputLink(link);
+            
+            const id = extractIdFromLink(link);
+            setExtractedId(id);
+            
+            if (id) {
+                const links = generateSSLLinks(id);
+                setSslLinks(links);
+            } else {
+                setSslLinks({});
+            }
+        };
+
+        const generateFormattedText = () => {
+            if (!privateKey && !certificate && !caRoot) return;
+            
+            const formatted = `Chúng tôi gửi thông tin chứng chỉ SSL, quý khách vui lòng kiểm tra lại và cài đặt lên hosting/server để sử dụng:
+
+#Private Key:
+${privateKey}
+
+#Certificate:
+${certificate}
+
+#CA:
+${caRoot}`;
+            
+            setFormattedText(formatted);
+        };
+
+        const copyToClipboard = async (text, type) => {
+            try {
+                await navigator.clipboard.writeText(text);
+                setCopied({ ...copied, [type]: true });
+                setTimeout(() => setCopied({ ...copied, [type]: false }), 2000);
+            } catch (err) {
+                console.error('Failed to copy: ', err);
+            }
+        };
+
+        const openLink = (url) => {
+            window.open(url, '_blank');
+        };
+
+        const calculateRenewalDate = (validTo) => {
+            if (!validTo) return '';
+            try {
+                const expirationDate = new Date(validTo);
+                const renewalDate = new Date(expirationDate.getTime() - (20 * 24 * 60 * 60 * 1000));
+                return renewalDate.toLocaleDateString('vi-VN');
+            } catch (err) {
+                return '';
+            }
+        };
+
+        const formatSSLDate = (dateString) => {
+            if (!dateString) return '';
+            try {
+                const date = new Date(dateString);
+                return date.toLocaleDateString('vi-VN');
+            } catch (err) {
+                return dateString;
+            }
+        };
+
+        const generateSSLRenewalNotice = (sslInfo) => {
+            if (!sslInfo || !sslInfo.exists || sslInfo.days_remaining < 30) return '';
+            
+            const expirationDate = formatSSLDate(sslInfo.valid_to);
+            const renewalDate = calculateRenewalDate(sslInfo.valid_to);
+            
+            return `Hiện tại dịch vụ SSL của Quý khách có thời hạn đến ${expirationDate}.
+
+Theo quy định từ phía SSL, việc gia hạn chỉ có thể thực hiện khi chứng chỉ còn thời hạn dưới 30 ngày, để được cộng dồn ngày sử dụng trước đó.
+
+Chúng tôi đã ghi nhận thông tin và sẽ tiến hành gia hạn cho Quý khách khi thời hạn dưới 30 ngày, dự kiến vào khoảng ${renewalDate}.`;
+        };
+
+        return (
+            _react2.default.createElement('div', { className: "min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4" },
+                _react2.default.createElement('div', { className: "max-w-6xl mx-auto" },
+                    _react2.default.createElement('div', { className: "bg-white rounded-lg shadow-lg p-6" },
+                        _react2.default.createElement('div', { className: "text-center mb-8" },
+                            _react2.default.createElement('h1', { className: "text-3xl font-bold text-gray-800 mb-2" }, "SSL Management Tool - Enhanced"),
+                            _react2.default.createElement('p', { className: "text-gray-600" }, "Công cụ Phân tích Domain, Quản lý SSL, Cấu hình Email Records")
+                        ),
+
+                        /* Tab Navigation */
+                        _react2.default.createElement('div', { className: "flex border-b border-gray-200 mb-6" },
+                            _react2.default.createElement('button', {
+                                onClick: () => setActiveTab('domain'),
+                                className: `px-6 py-3 font-medium ${activeTab === 'domain' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`,
+                            },
+                                _react2.default.createElement(_lucidereact.Globe, { className: "w-5 h-5 inline mr-2" }), "Phân tích Domain"
+                            ),
+                            _react2.default.createElement('button', {
+                                onClick: () => setActiveTab('ssl'),
+                                className: `px-6 py-3 font-medium ${activeTab === 'ssl' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`,
+                            },
+                                _react2.default.createElement(_lucidereact.Shield, { className: "w-5 h-5 inline mr-2" }), "Quản lý SSL"
+                            ),
+                            _react2.default.createElement('button', {
+                                onClick: () => setActiveTab('certificate'),
+                                className: `px-6 py-3 font-medium ${activeTab === 'certificate' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`,
+                            },
+                                _react2.default.createElement(_lucidereact.Key, { className: "w-5 h-5 inline mr-2" }), "Tạo template SSL"
+                            ),
+                            _react2.default.createElement('button', {
+                                onClick: () => setActiveTab('emailRecords'),
+                                className: `px-6 py-3 font-medium ${activeTab === 'emailRecords' ? 'border-b-2 border-blue-500 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`,
+                            },
+                                _react2.default.createElement(_lucidereact.Mail, { className: "w-5 h-5 inline mr-2" }), "Tạo Email Records"
+                            ),
+
+                        ),
+
+                        /* Domain Analysis Tab */
+                        activeTab === 'domain' && (
+                            _react2.default.createElement('div', { className: "space-y-6" },
+                                _react2.default.createElement('div', { className: "bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-6" },
+                                    _react2.default.createElement('div', { className: "flex items-center mb-4" },
+                                        _react2.default.createElement(_lucidereact.Search, { className: "w-6 h-6 text-green-600 mr-3" }),
+                                        _react2.default.createElement('h2', { className: "text-xl font-bold text-green-800" }, "Bước 1: Phân tích Domain và SSL")
+                                    ),
+
+                                    _react2.default.createElement('div', { className: "space-y-4" },
+                                        _react2.default.createElement('div', null,
+                                            _react2.default.createElement('label', { className: "block text-sm font-medium text-gray-700 mb-2" }, "Nhập tên domain (ví dụ: example.com):"),
+                                            _react2.default.createElement('style', null, `
+                                                input::placeholder {
+                                                    color: rgba(55, 65, 81, 0.5);
+                                                    font-style: italic;
+                                                    font-weight: 300;
+                                                    font-family: 'Inter', sans-serif;
+                                                    transition: color 0.3s ease-in-out;
+                                                }
+                                                input:focus::placeholder {
+                                                    color: rgba(55, 65, 81, 0.3);
+                                                }
+                                                .fast-spin {
+                                                    animation: spin 0.5s linear infinite;
+                                                }
+                                                .ultra-fast-spin {
+                                                    animation: spin 0.3s linear infinite;
+                                                }
+                                                .pulse-fast {
+                                                    animation: pulse 1s ease-in-out infinite;
+                                                }
+                                                .bounce-fast {
+                                                    animation: bounce 0.8s infinite;
+                                                }
+                                                @keyframes spin {
+                                                    from { transform: rotate(0deg); }
+                                                    to { transform: rotate(360deg); }
+                                                }
+                                                @keyframes pulse {
+                                                    0%, 100% { opacity: 1; }
+                                                    50% { opacity: .5; }
+                                                }
+                                                @keyframes bounce {
+                                                    0%, 100% { transform: translateY(-25%); animation-timing-function: cubic-bezier(0.8,0,1,1); }
+                                                    50% { transform: none; animation-timing-function: cubic-bezier(0,0,0.2,1); }
+                                                }
+                                            `),
+                                            _react2.default.createElement('div', { className: "flex gap-2" },
+                                                _react2.default.createElement('input', {
+                                                    type: "text",
+                                                    value: domainInput,
+                                                    onChange: handleDomainInputChange,
+                                                    onKeyPress: handleKeyPress,
+                                                    placeholder: "example.com",
+                                                    className: "flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent",
+                                                    disabled: isAnalyzing
+                                                }),
+                                                _react2.default.createElement('button', {
+                                                    onClick: () => {
+                                                        const cleanedDomain = cleanDomainInput(domainInput);
+                                                        if (cleanedDomain) {
+                                                            analyzeDomain(cleanedDomain);
+                                                        }
+                                                    },
+                                                    disabled: isAnalyzing || !domainInput.trim(),
+                                                    className: "px-6 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                                }, 
+                                                    isAnalyzing ? 
+                                                        _react2.default.createElement('div', { className: "flex items-center" },
+                                                            _react2.default.createElement('div', { className: "ultra-fast-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2" }),
+                                                            "Đang phân tích..."
+                                                        ) : "Phân tích"
+                                                )
+                                            )
+                                        ),
+
+                                        /* Enhanced Progress Indicators */
+                                        isAnalyzing && (
+                                            _react2.default.createElement('div', { className: "bg-gradient-to-r from-blue-50 via-indigo-50 to-purple-50 border border-blue-200 rounded-lg p-4 pulse-fast" },
+                                                _react2.default.createElement('h3', { className: "text-sm font-semibold text-blue-800 mb-3 flex items-center" }, 
+                                                    _react2.default.createElement('div', { className: "ultra-fast-spin rounded-full h-3 w-3 border-2 border-blue-500 border-t-transparent mr-2" }),
+                                                    "Tiến trình phân tích (Song song):"
+                                                ),
+                                                _react2.default.createElement('div', { className: "grid grid-cols-1 md:grid-cols-3 gap-3 text-sm" },
+                                                    _react2.default.createElement('div', { className: "flex items-center bg-white rounded-md p-2 border" },
+                                                        analysisProgress.whois.loading ? 
+                                                            _react2.default.createElement('div', { className: "fast-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent mr-2" }) :
+                                                            analysisProgress.whois.completed ? 
+                                                                _react2.default.createElement(_lucidereact.CheckCircle, { className: "w-4 h-4 text-green-500 mr-2 bounce-fast" }) :
+                                                                _react2.default.createElement(_lucidereact.XCircle, { className: "w-4 h-4 text-red-500 mr-2" }),
+                                                        _react2.default.createElement('span', { className: `font-medium ${analysisProgress.whois.completed ? "text-green-700" : analysisProgress.whois.loading ? "text-blue-700" : "text-red-700"}` },
+                                                            "WHOIS"
+                                                        )
+                                                    ),
+                                                    _react2.default.createElement('div', { className: "flex items-center bg-white rounded-md p-2 border" },
+                                                        analysisProgress.hosting.loading ? 
+                                                            _react2.default.createElement('div', { className: "fast-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent mr-2" }) :
+                                                            analysisProgress.hosting.completed ? 
+                                                                _react2.default.createElement(_lucidereact.CheckCircle, { className: "w-4 h-4 text-green-500 mr-2 bounce-fast" }) :
+                                                                _react2.default.createElement(_lucidereact.XCircle, { className: "w-4 h-4 text-red-500 mr-2" }),
+                                                        _react2.default.createElement('span', { className: `font-medium ${analysisProgress.hosting.completed ? "text-green-700" : analysisProgress.hosting.loading ? "text-blue-700" : "text-red-700"}` },
+                                                            "Hosting/IP"
+                                                        )
+                                                    ),
+                                                    _react2.default.createElement('div', { className: "flex items-center bg-white rounded-md p-2 border" },
+                                                        analysisProgress.ssl.loading ? 
+                                                            _react2.default.createElement('div', { className: "fast-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent mr-2" }) :
+                                                            analysisProgress.ssl.completed ? 
+                                                                _react2.default.createElement(_lucidereact.CheckCircle, { className: "w-4 h-4 text-green-500 mr-2 bounce-fast" }) :
+                                                                _react2.default.createElement(_lucidereact.XCircle, { className: "w-4 h-4 text-red-500 mr-2" }),
+                                                        _react2.default.createElement('span', { className: `font-medium ${analysisProgress.ssl.completed ? "text-green-700" : analysisProgress.ssl.loading ? "text-blue-700" : "text-red-700"}` },
+                                                            "SSL"
+                                                        )
+                                                    )
+                                                )
+                                            )
+                                        ),
+
+                                        /* Domain Information */
+                                        domainInfo && (
+                                            _react2.default.createElement('div', { className: "bg-white rounded-lg border border-green-200 p-4 shadow-sm" },
+                                                _react2.default.createElement('h3', { className: "text-lg font-semibold text-gray-800 mb-3 flex items-center" },
+                                                    _react2.default.createElement(_lucidereact.Globe, { className: "w-5 h-5 mr-2 text-green-600" }),
+                                                    "Domain Information"
+                                                ),
+                                                _react2.default.createElement('div', { className: "grid md:grid-cols-2 gap-4 text-sm" },
+                                                    _react2.default.createElement('div', null,
+                                                        _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Domain:"),
+                                                        _react2.default.createElement('a', {
+                                                            href: `https://${domainInfo.domain}`,
+                                                            target: "_blank",
+                                                            rel: "noopener noreferrer",
+                                                            className: "ml-2 text-blue-600 hover:underline"
+                                                        }, domainInfo.domain || 'N/A')
+                                                    ),
+                                                    _react2.default.createElement('div', null,
+                                                        _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "IP:"),
+                                                        _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, 
+                                                            domainInfo.ip ? domainInfo.ip : 
+                                                                (analysisProgress.hosting.loading ? 
+                                                                    _react2.default.createElement('span', { className: "text-blue-500 italic flex items-center" }, 
+                                                                        _react2.default.createElement('div', { className: "fast-spin rounded-full h-3 w-3 border border-blue-500 border-t-transparent mr-1" }),
+                                                                        "Đang tải..."
+                                                                    ) : 'N/A'
+                                                                )
+                                                        )
+                                                    ),
+                                                    _react2.default.createElement('div', null,
+                                                        _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Registrar:"),
+                                                        _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, 
+                                                            domainInfo.registrar ? domainInfo.registrar : 
+                                                                (analysisProgress.whois.loading ? 
+                                                                    _react2.default.createElement('span', { className: "text-blue-500 italic flex items-center" }, 
+                                                                        _react2.default.createElement('div', { className: "fast-spin rounded-full h-3 w-3 border border-blue-500 border-t-transparent mr-1" }),
+                                                                        "Đang tải..."
+                                                                    ) : 'N/A'
+                                                                )
+                                                        )
+                                                    ),
+                                                    _react2.default.createElement('div', null,
+                                                        _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Name Servers:"),
+                                                        _react2.default.createElement('div', { className: "ml-2 text-gray-800" },
+                                                            domainInfo.nameservers.length > 0 ? 
+                                                                domainInfo.nameservers.map((ns, index) => (
+                                                                    _react2.default.createElement('div', { key: index }, ns)
+                                                                )) : 
+                                                                (analysisProgress.whois.loading ? 
+                                                                    _react2.default.createElement('span', { className: "text-blue-500 italic flex items-center" }, 
+                                                                        _react2.default.createElement('div', { className: "fast-spin rounded-full h-3 w-3 border border-blue-500 border-t-transparent mr-1" }),
+                                                                        "Đang tải..."
+                                                                    ) : 'N/A'
+                                                                )
+                                                        )
+                                                    ),
+                                                    _react2.default.createElement('div', null,
+                                                        _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "AS:"),
+                                                        _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, 
+                                                            domainInfo.as ? domainInfo.as : 
+                                                                (analysisProgress.hosting.loading ? 
+                                                                    _react2.default.createElement('span', { className: "text-blue-500 italic flex items-center" }, 
+                                                                        _react2.default.createElement('div', { className: "fast-spin rounded-full h-3 w-3 border border-blue-500 border-t-transparent mr-1" }),
+                                                                        "Đang tải..."
+                                                                    ) : 'N/A'
+                                                                )
+                                                        )
+                                                    ),
+                                                    _react2.default.createElement('div', null,
+                                                        _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Status:"),
+                                                        _react2.default.createElement('span', { 
+                                                            className: `ml-2 ${getStatusColorClass(domainInfo.status)}` 
+                                                        }, 
+                                                            domainInfo.status ? domainInfo.status : 
+                                                                (analysisProgress.whois.loading ? 
+                                                                    _react2.default.createElement('span', { className: "text-blue-500 italic flex items-center" }, 
+                                                                        _react2.default.createElement('div', { className: "fast-spin rounded-full h-3 w-3 border border-blue-500 border-t-transparent mr-1" }),
+                                                                        "Đang tải..."
+                                                                    ) : 'N/A'
+                                                                )
+                                                        )
+                                                    ),
+                                                    domainInfo.issueDate && (
+                                                        _react2.default.createElement('div', null,
+                                                            _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Creation Date:"),
+                                                            _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, formatDate(domainInfo.issueDate))
+                                                        )
+                                                    ),
+                                                    domainInfo.expiredDate && (
+                                                        _react2.default.createElement('div', null,
+                                                            _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Registry Expiry Date:"),
+                                                            _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, formatDate(domainInfo.expiredDate))
+                                                        )
+                                                    ),
+                                                    _react2.default.createElement('div', null,
+                                                        _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Country:"),
+                                                        _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, 
+                                                            domainInfo.country ? domainInfo.country : 
+                                                                (analysisProgress.hosting.loading ? 
+                                                                    _react2.default.createElement('span', { className: "text-blue-500 italic flex items-center" }, 
+                                                                        _react2.default.createElement('div', { className: "fast-spin rounded-full h-3 w-3 border border-blue-500 border-t-transparent mr-1" }),
+                                                                        "Đang tải..."
+                                                                    ) : 'N/A'
+                                                                )
+                                                        )
+                                                    )
+                                                )
+                                            )
+                                        ),
+
+                                        /* SSL Information Panel */
+                                        (sslInfo || (domainInfo && analysisProgress.ssl.loading)) && (
+                                            _react2.default.createElement('div', { className: "mt-6" },
+                                                _react2.default.createElement('div', { className: `bg-white rounded-lg border p-4 shadow-sm ${sslInfo ? (sslInfo.exists ? 'border-green-200' : 'border-red-200') : 'border-blue-200'}` },
+                                                    _react2.default.createElement('h3', { className: "text-lg font-semibold text-gray-800 mb-3 flex items-center" },
+                                                        _react2.default.createElement(_lucidereact.Shield, { className: `w-5 h-5 mr-2 ${sslInfo ? (sslInfo.exists ? 'text-green-600' : 'text-red-600') : 'text-blue-600'}` }),
+                                                        "SSL Information"
+                                                    ),
+                                                    sslInfo ? (
+                                                        sslInfo.exists ? (
+                                                            _react2.default.createElement('div', { className: "grid md:grid-cols-2 gap-4 text-sm" },
+                                                                _react2.default.createElement('div', null,
+                                                                    _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Status:"),
+                                                                    _react2.default.createElement('span', { className: `ml-2 ${sslInfo.is_valid ? 'text-green-600' : 'text-red-600'}` },
+                                                                        sslInfo.is_valid ? 'Valid' : 'Invalid'
+                                                                    )
+                                                                ),
+                                                                _react2.default.createElement('div', null,
+                                                                    _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Days Remaining:"),
+                                                                    _react2.default.createElement('span', { className: `ml-2 ${sslInfo.days_remaining > 30 ? 'text-green-600' : sslInfo.days_remaining > 7 ? 'text-yellow-600' : 'text-red-600'}` },
+                                                                        `${sslInfo.days_remaining} days`
+                                                                    )
+                                                                ),
+                                                                _react2.default.createElement('div', null,
+                                                                    _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Issued To CN:"),
+                                                                    _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, sslInfo.issued_to || 'N/A')
+                                                                ),
+                                                                _react2.default.createElement('div', null,
+                                                                    _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Issued Org:"),
+                                                                    _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, sslInfo.issued_org || 'N/A')
+                                                                ),
+                                                                _react2.default.createElement('div', null,
+                                                                    _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Issuer By CN:"),
+                                                                    _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, sslInfo.issuer_cn || 'N/A')
+                                                                ),
+                                                                _react2.default.createElement('div', null,
+                                                                    _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Issuer Org:"),
+                                                                    _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, sslInfo.issuer_org || 'N/A')
+                                                                ),
+                                                                _react2.default.createElement('div', null,
+                                                                    _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "SSL IP:"),
+                                                                    _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, sslInfo.ip || 'N/A')
+                                                                ),
+                                                                _react2.default.createElement('div', null,
+                                                                    _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Valid From:"),
+                                                                    _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, sslInfo.valid_from || 'N/A')
+                                                                ),
+                                                                _react2.default.createElement('div', null,
+                                                                    _react2.default.createElement('span', { className: "font-medium text-gray-600" }, "Valid To:"),
+                                                                    _react2.default.createElement('span', { className: "ml-2 text-gray-800" }, sslInfo.valid_to || 'N/A')
+                                                                )
+                                                            )
+                                                        ) : (
+                                                            _react2.default.createElement('div', { className: "text-red-600" },
+                                                                _react2.default.createElement('p', null, sslInfo.error || 'No SSL certificate found for this domain')
+                                                            )
+                                                        )
+                                                    ) : (
+                                                        _react2.default.createElement('div', { className: "flex items-center text-blue-600" },
+                                                            _react2.default.createElement('div', { className: "ultra-fast-spin rounded-full h-4 w-4 border-2 border-blue-500 border-t-transparent mr-2" }),
+                                                            _react2.default.createElement('span', { className: "pulse-fast" }, "Đang kiểm tra SSL...")
+                                                        )
+                                                    )
+                                                )
+                                            )
+                                        ),
+
+                                        /* SSL Search Link */
+                                        domainSearchLink && (isAnalyzing || domainInfo) && (
+                                            _react2.default.createElement('div', { className: "mt-6 bg-white rounded-lg border p-4" },
+                                                _react2.default.createElement('h3', { className: "text-md font-semibold text-gray-800 mb-2" }, "Tìm kiếm SSL đã mua:"),
+                                                _react2.default.createElement('div', { className: "flex gap-2" },
+                                                    _react2.default.createElement('button', {
+                                                        onClick: () => openLink(domainSearchLink),
+                                                        className: "flex items-center px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+                                                    },
+                                                        _react2.default.createElement(_lucidereact.ExternalLink, { className: "w-4 h-4 mr-1" }), "Mở tìm kiếm"
+                                                    )
+                                                )
+                                            )
+                                        ),
+
+                                        /* Instructions for Finding Order ID */
+                                        domainSearchLink && (isAnalyzing || domainInfo) && (
+                                            _react2.default.createElement('div', { className: "mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4" },
+                                                _react2.default.createElement('div', { className: "flex items-start" },
+                                                    _react2.default.createElement(_lucidereact.AlertCircle, { className: "w-5 h-5 text-yellow-600 mt-0.5 mr-2 flex-shrink-0" }),
+                                                    _react2.default.createElement('div', { className: "text-sm text-yellow-800" },
+                                                        _react2.default.createElement('p', { className: "font-semibold mb-1" }, "Hướng dẫn tìm Order ID mới nhất:"),
+                                                        _react2.default.createElement('p', null, "1. Mở link tìm kiếm để xem danh sách SSL của domain"),
+                                                        _react2.default.createElement('p', null, "2. Tìm dòng có STT = 1 (dòng đầu tiên) - đây là Order ID mới nhất"),
+                                                        _react2.default.createElement('p', null, "3. Copy link Order ID từ cột \"Order ID\" trong dòng đó"),
+                                                        _react2.default.createElement('p', null, "4. Paste link Order ID vào phần Quản lý SSL")
+                                                    )
+                                                )
+                                            )
+                                        ),
+
+                                        /* SSL Renewal Notice Template */
+                                        sslInfo && sslInfo.exists && sslInfo.days_remaining >= 30 && (
+                                            _react2.default.createElement('div', { className: "mt-6 bg-emerald-50 border border-emerald-200 rounded-lg p-4" },
+                                                _react2.default.createElement('div', { className: "flex items-center mb-3" },
+                                                    _react2.default.createElement(_lucidereact.Clock, { className: "w-5 h-5 text-emerald-600 mr-2" }),
+                                                    _react2.default.createElement('h3', { className: "text-lg font-semibold text-emerald-800" }, "Thông báo lịch hẹn gia hạn SSL")
+                                                ),
+                                                _react2.default.createElement('div', { className: "bg-white border border-emerald-200 rounded p-3 mb-3" },
+                                                    _react2.default.createElement('p', { className: "text-sm text-emerald-800 whitespace-pre-line" },
+                                                        generateSSLRenewalNotice(sslInfo)
+                                                    )
+                                                ),
+                                                _react2.default.createElement('button', {
+                                                    onClick: () => copyToClipboard(generateSSLRenewalNotice(sslInfo), 'sslRenewal'),
+                                                    className: "flex items-center px-4 py-2 bg-emerald-600 text-white rounded hover:bg-emerald-700 transition-colors text-sm"
+                                                },
+                                                    copied.sslRenewal ? _react2.default.createElement(_lucidereact.Check, { className: "w-4 h-4 mr-1" }) : _react2.default.createElement(_lucidereact.Copy, { className: "w-4 h-4 mr-1" }),
+                                                    copied.sslRenewal ? 'Đã copy!' : 'Copy text'
+                                                )
+                                            )
+                                        ),
+
+                                        /* Domain/DNS Notice Template */
+                                        domainSearchLink && (isAnalyzing || domainInfo) && (
+                                            _react2.default.createElement('div', { className: "mt-6 bg-gray-100 border border-gray-200 rounded-lg p-4" },
+                                                _react2.default.createElement('div', { className: "flex items-center mb-3" },
+                                                    _react2.default.createElement(_lucidereact.Info, { className: "w-5 h-5 text-gray-600 mr-2" }),
+                                                    _react2.default.createElement('h3', { className: "text-lg font-semibold text-gray-800" }, 
+                                                        "Thông báo khi Domain, DNS & IP hosting nơi khác"
+                                                    )
+                                                ),
+                                                _react2.default.createElement('div', { className: "bg-white border border-gray-200 rounded p-3 mb-3" },
+                                                    _react2.default.createElement('textarea', {
+                                                        value: getResponseText(domainInfo.registrar, domainInfo.isp, domainInfo.nameservers),
+                                                        readOnly: true,
+                                                        className: "w-full h-40 p-3 border border-gray-200 rounded text-sm resize-none bg-gray-50 text-gray-700"
+                                                    })
+                                                ),
+                                                _react2.default.createElement('button', {
+                                                    onClick: () => copyToClipboard(getResponseText(domainInfo.registrar, domainInfo.isp, domainInfo.nameservers), 'response'),
+                                                    className: "flex items-center px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors text-sm"
+                                                },
+                                                    copied.response 
+                                                        ? _react2.default.createElement(_lucidereact.Check, { className: "w-4 h-4 mr-1" }) 
+                                                        : _react2.default.createElement(_lucidereact.Copy, { className: "w-4 h-4 mr-1" }),
+                                                    copied.response ? 'Đã copy!' : 'Copy text'
+                                                )
+                                            )
+                                        ),
+
+                                        /* SSL Request Link Input */
+                                        domainInfo && domainInfo.registrar === 'P.A. Viet Nam Company Limited' && 
+                                        (domainInfo.isp === 'SUPERDATA-VN' || domainInfo.nameservers.some(ns => ns.includes('pavietnam'))) && (
+                                            _react2.default.createElement('div', { className: "mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4" },
+                                                // ... giữ nguyên phần này
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        ),
+
+                        /* SSL Management Tab */
+                        activeTab === 'ssl' && (
+                            _react2.default.createElement('div', { className: "space-y-6" },
+                                _react2.default.createElement('div', { className: "bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6" },
+                                    _react2.default.createElement('div', { className: "flex items-center mb-4" },
+                                        _react2.default.createElement(_lucidereact.Shield, { className: "w-6 h-6 text-blue-600 mr-3" }),
+                                        _react2.default.createElement('h2', { className: "text-xl font-bold text-blue-800" }, "Bước 2: Quản lý SSL theo Link/Order ID")
+                                    ),
+                                    _react2.default.createElement('div', { className: "space-y-6" },
+                                        _react2.default.createElement('div', null,
+                                            _react2.default.createElement('label', { className: "block text-sm font-medium text-gray-700 mb-2" }, "Nhập link Order ID(gia hạn/đăng ký mới) chứa ID:"),
+                                            _react2.default.createElement('label', { className: "block text-sm font-medium text-gray-700 mb-2 mt-1" },
+                                                "Tham khảo: ",
+                                                _react2.default.createElement('a', {
+                                                    href: "https://raw.githubusercontent.com/lucskyost/pavietnam/refs/heads/main/order_id_url.jpg",
+                                                    target: "_blank",
+                                                    rel: "noopener noreferrer",
+                                                    className: "text-blue-600 underline"
+                                                }, "Link hướng dẫn")
+                                            ),
+                                            _react2.default.createElement('input', {
+                                                type: "text",
+                                                value: inputLink,
+                                                onChange: handleSSLLinkInput,
+                                                placeholder: "https://support.pavietnam.vn/index.php?pa=ssl-helper&act=orderDetail&id=99999999",
+                                                className: "w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                            }),
+                                            extractedId && (
+                                                _react2.default.createElement('div', { className: "mt-2 text-sm text-green-600" }, "✓ Đã phát hiện ID: ",
+                                                    _react2.default.createElement('span', { className: "font-mono font-bold" }, extractedId)
+                                                )
+                                            )
+                                        ),
+                                        extractedId && (
+                                            _react2.default.createElement('div', { className: "grid lg:grid-cols-2 xl:grid-cols-4 gap-4" },
+                                                _react2.default.createElement('div', { className: "bg-purple-50 border border-purple-200 rounded-lg p-4" },
+                                                    _react2.default.createElement('div', { className: "flex items-center mb-3" },
+                                                        _react2.default.createElement(_lucidereact.FileText, { className: "w-4 h-4 text-purple-600 mr-2" }),
+                                                        _react2.default.createElement('h3', { className: "text-lg font-semibold text-purple-800" }, "Đơn Hàng(Copy đính kèm với Private Key & Cert)")
+                                                    ),
+                                                    _react2.default.createElement('div', { className: "flex gap-2" },
+                                                        _react2.default.createElement('button', {
+                                                            onClick: () => copyToClipboard(sslLinks.order, 'order'),
+                                                            className: "flex items-center px-3 py-2 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors text-sm"
+                                                        },
+                                                            copied.order ? _react2.default.createElement(_lucidereact.Check, { className: "w-4 h-4 mr-1" }) : _react2.default.createElement(_lucidereact.Copy, { className: "w-4 h-4 mr-1" }),
+                                                            copied.order ? 'OK!' : 'Copy'
+                                                        ),
+                                                        _react2.default.createElement('button', {
+                                                            onClick: () => openLink(sslLinks.order),
+                                                            className: "flex items-center px-3 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors text-sm"
+                                                        },
+                                                            _react2.default.createElement(_lucidereact.ExternalLink, { className: "w-4 h-4 mr-1" }), "Mở"
+                                                        )
+                                                    )
+                                                ),
+                                                _react2.default.createElement('div', { className: "bg-blue-50 border border-blue-200 rounded-lg p-4" },
+                                                    _react2.default.createElement('div', { className: "flex items-center mb-3" },
+                                                        _react2.default.createElement('div', { className: "w-3 h-3 bg-blue-500 rounded-full mr-2" }),
+                                                        _react2.default.createElement('h3', { className: "text-lg font-semibold text-blue-800" }, "Đăng Ký")
+                                                    ),
+                                                    _react2.default.createElement('div', { className: "flex gap-2" },
+                                                        _react2.default.createElement('button', {
+                                                            onClick: () => copyToClipboard(sslLinks.register, 'register'),
+                                                            className: "flex items-center px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors text-sm"
+                                                        },
+                                                            copied.register ? _react2.default.createElement(_lucidereact.Check, { className: "w-4 h-4 mr-1" }) : _react2.default.createElement(_lucidereact.Copy, { className: "w-4 h-4 mr-1" }),
+                                                            copied.register ? 'OK!' : 'Copy'
+                                                        ),
+                                                        _react2.default.createElement('button', {
+                                                            onClick: () => openLink(sslLinks.register),
+                                                            className: "flex items-center px-3 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors text-sm"
+                                                        },
+                                                            _react2.default.createElement(_lucidereact.ExternalLink, { className: "w-4 h-4 mr-1" }), "Mở"
+                                                        )
+                                                    )
+                                                ),
+                                                _react2.default.createElement('div', { className: "bg-orange-50 border border-orange-200 rounded-lg p-4" },
+                                                    _react2.default.createElement('div', { className: "flex items-center mb-3" },
+                                                        _react2.default.createElement(_lucidereact.RefreshCw, { className: "w-4 h-4 text-orange-600 mr-2" }),
+                                                        _react2.default.createElement('h3', { className: "text-lg font-semibold text-orange-800" }, "Gia Hạn")
+                                                    ),
+                                                    _react2.default.createElement('div', { className: "flex gap-2" },
+                                                        _react2.default.createElement('button', {
+                                                            onClick: () => copyToClipboard(sslLinks.renew, 'renew'),
+                                                            className: "flex items-center px-3 py-2 bg-orange-500 text-white rounded hover:bg-orange-600 transition-colors text-sm"
+                                                        },
+                                                            copied.renew ? _react2.default.createElement(_lucidereact.Check, { className: "w-4 h-4 mr-1" }) : _react2.default.createElement(_lucidereact.Copy, { className: "w-4 h-4 mr-1" }),
+                                                            copied.renew ? 'OK!' : 'Copy'
+                                                        ),
+                                                        _react2.default.createElement('button', {
+                                                            onClick: () => openLink(sslLinks.renew),
+                                                            className: "flex items-center px-3 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors text-sm"
+                                                        },
+                                                            _react2.default.createElement(_lucidereact.ExternalLink, { className: "w-4 h-4 mr-1" }), "Mở"
+                                                        )
+                                                    )
+                                                ),
+                                                _react2.default.createElement('div', { className: "bg-green-50 border border-green-200 rounded-lg p-4" },
+                                                    _react2.default.createElement('div', { className: "flex items-center mb-3" },
+                                                        _react2.default.createElement('div', { className: "w-3 h-3 bg-green-500 rounded-full mr-2" }),
+                                                        _react2.default.createElement('h3', { className: "text-lg font-semibold text-green-800" }, "Download(Tải xuống cert không cần vào web)")
+                                                    ),
+                                                    _react2.default.createElement('div', { className: "flex gap-2" },
+                                                        _react2.default.createElement('button', {
+                                                            onClick: () => copyToClipboard(sslLinks.download, 'download'),
+                                                            className: "flex items-center px-3 py-2 bg-green-600 text-white rounded hover:bg-green-600 transition-colors text-sm"
+                                                        },
+                                                            copied.download ? _react2.default.createElement(_lucidereact.Check, { className: "w-4 h-4 mr-1" }) : _react2.default.createElement(_lucidereact.Copy, { className: "w-4 h-4 mr-1" }),
+                                                            copied.download ? 'OK!' : 'Copy'
+                                                        ),
+                                                        _react2.default.createElement('button', {
+                                                            onClick: () => openLink(sslLinks.download),
+                                                            className: "flex items-center px-3 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors text-sm"
+                                                        },
+                                                            _react2.default.createElement(_lucidereact.ExternalLink, { className: "w-4 h-4 mr-1" }), "Mở"
+                                                        )
+                                                    )
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        ),
+
+                        /* Certificate Generator Tab */
+                        activeTab === 'certificate' && (
+                            _react2.default.createElement('div', { className: "space-y-6" },
+                                _react2.default.createElement('div', { className: "bg-gradient-to-r from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg p-6" },
+                                    _react2.default.createElement('div', { className: "flex items-center mb-4" },
+                                        _react2.default.createElement(_lucidereact.Key, { className: "w-6 h-6 text-indigo-600 mr-3" }),
+                                        _react2.default.createElement('h2', { className: "text-xl font-bold text-indigo-800" }, "Bước 3: Tạo mẫu phản hồi thông tin chứng chỉ SSL")
+                                    ),
+
+                                    _react2.default.createElement('div', { className: "space-y-4" },
+                                        _react2.default.createElement('div', null,
+                                            _react2.default.createElement('label', { className: "block text-sm font-medium text-gray-700 mb-2" }, "Private Key:"),
+                                            _react2.default.createElement('textarea', {
+                                                value: privateKey,
+                                                onChange: (e) => setPrivateKey(e.target.value),
+                                                placeholder: "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC...",
+                                                className: "w-full h-32 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-mono text-sm"
+                                            })
+                                        ),
+
+                                        _react2.default.createElement('div', null,
+                                            _react2.default.createElement('label', { className: "block text-sm font-medium text-gray-700 mb-2" }, "Certificate:"),
+                                            _react2.default.createElement('textarea', {
+                                                value: certificate,
+                                                onChange: (e) => setCertificate(e.target.value),
+                                                placeholder: "-----BEGIN CERTIFICATE-----\nMIIFXTCCBEWgAwIBAgISBBOGFvqHZxQXHH6wVJhNuMvaMA0GCSqGSIb3DQEBCwUA...",
+                                                className: "w-full h-32 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-mono text-sm"
+                                            })
+                                        ),
+
+                                        _react2.default.createElement('div', null,
+                                            _react2.default.createElement('label', { className: "block text-sm font-medium text-gray-700 mb-2" }, "CA Root:"),
+                                            _react2.default.createElement('textarea', {
+                                                value: caRoot,
+                                                onChange: (e) => setCaRoot(e.target.value),
+                                                placeholder: "-----BEGIN CERTIFICATE-----\nMIIFFjCCAv6gAwIBAgIRAJErCErPDBinU/bWLiWnX1owDQYJKoZIhvcNAQELBQAw...",
+                                                className: "w-full h-32 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent font-mono text-sm"
+                                            })
+                                        ),
+
+                                        _react2.default.createElement('button', {
+                                            onClick: generateFormattedText,
+                                            className: "w-full px-4 py-3 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors font-medium"
+                                        }, "Tạo mẫu phản hồi thông tin chứng chỉ SSL"),
+
+                                        formattedText && (
+                                            _react2.default.createElement('div', { className: "bg-white border border-gray-300 rounded-lg p-4" },
+                                                _react2.default.createElement('h3', { className: "text-lg font-semibold text-gray-800 mb-3" }, "Thông tin chứng chỉ SSL được tạo:"),
+                                                _react2.default.createElement('textarea', {
+                                                    value: formattedText,
+                                                    readOnly: true,
+                                                    className: "w-full h-60 p-3 border border-gray-300 rounded text-sm font-mono resize-none bg-gray-50"
+                                                }),
+                                                _react2.default.createElement('button', {
+                                                    onClick: () => copyToClipboard(formattedText, 'formatted'),
+                                                    className: "mt-3 flex items-center px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600 transition-colors"
+                                                },
+                                                    copied.formatted ? _react2.default.createElement(_lucidereact.Check, { className: "w-4 h-4 mr-1" }) : _react2.default.createElement(_lucidereact.Copy, { className: "w-4 h-4 mr-1" }),
+                                                    copied.formatted ? 'Đã copy!' : 'Copy thông tin chứng chỉ'
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        ),
+                        /* Email Records Tab */
+                        activeTab === 'emailRecords' && (
+                            _react2.default.createElement('div', { className: "space-y-6" },
+                                _react2.default.createElement('div', { className: "bg-gradient-to-r from-pink-50 to-rose-100 border border-rose-200 rounded-lg p-6" },
+                                    _react2.default.createElement('div', { className: "flex items-center mb-4" },
+                                        _react2.default.createElement(_lucidereact.Mail, { className: "w-6 h-6 text-rose-500 mr-3" }),
+                                        _react2.default.createElement('h2', { className: "text-xl font-bold text-rose-600" }, "Tạo Email DNS Records")
+                                    ),
+
+                                    _react2.default.createElement('div', { className: "space-y-4" },
+                                        _react2.default.createElement('div', null,
+                                            _react2.default.createElement('label', { className: "block text-sm font-medium text-gray-700 mb-2" }, "Nhập địa chỉ IP (ví dụ: 112.213.92.115):"),
+                                            _react2.default.createElement('div', { className: "flex gap-2" },
+                                                _react2.default.createElement('input', {
+                                                    type: "text",
+                                                    value: ipInput,
+                                                    onChange: (e) => setIpInput(e.target.value),
+                                                    onKeyDown: (e) => { if (e.key === 'Enter') handleGenerateRecords(); },
+                                                    placeholder: "112.213.92.115",
+                                                    className: "flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                                                }),
+                                                _react2.default.createElement('button', {
+                                                    onClick: handleGenerateRecords,
+                                                    disabled: !ipInput.trim(),
+                                                    className: "px-6 py-3 bg-rose-500 text-white rounded-lg hover:bg-rose-500 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                                }, "Generate Records")
+                                            )
+                                        ),
+
+                                        dnsRecords.length > 0 && (
+                                            _react2.default.createElement('div', { className: "overflow-x-auto" },
+                                                _react2.default.createElement('table', { className: "min-w-full border border-gray-300 rounded-lg overflow-hidden" },
+                                                    _react2.default.createElement('thead', { className: "bg-gray-100" },
+                                                        _react2.default.createElement('tr', null,
+                                                            _react2.default.createElement('th', { className: "px-4 py-2 text-left text-sm font-semibold text-gray-700 border" }, "Name"),
+                                                            _react2.default.createElement('th', { className: "px-4 py-2 text-center text-sm font-semibold text-gray-700 border" }, "Type"),
+                                                            _react2.default.createElement('th', { className: "px-4 py-2 text-left text-sm font-semibold text-gray-700 border" }, "Value"),
+                                                            _react2.default.createElement('th', { className: "px-4 py-2 text-center text-sm font-semibold text-gray-700 border" }, "Priority")
+                                                        )
+                                                    ),
+                                                    _react2.default.createElement('tbody', null,
+                                                        dnsRecords.map((record, idx) =>
+                                                            _react2.default.createElement('tr', { key: idx, className: "hover:bg-gray-50" },
+
+                                                                // Name
+                                                                _react2.default.createElement('td', { className: "px-4 py-2 border font-mono text-sm" },
+                                                                    _react2.default.createElement('div', { className: "flex items-center gap-2" },
+                                                                        _react2.default.createElement('span', null, record.name),
+                                                                        _react2.default.createElement('button', {
+                                                                            onClick: () => copyToClipboard(record.name, `name-${idx}`),
+                                                                            className: "text-gray-500 hover:text-pink-600"
+                                                                        },
+                                                                            copied[`name-${idx}`]
+                                                                                ? _react2.default.createElement(_lucidereact.Check, { className: "w-4 h-4" })
+                                                                                : _react2.default.createElement(_lucidereact.Copy, { className: "w-4 h-4" })
+                                                                        )
+                                                                    )
+                                                                ),
+
+                                                                // Type
+                                                                _react2.default.createElement('td', { className: "px-4 py-2 border font-mono text-sm text-center" },
+                                                                    _react2.default.createElement('div', { className: "flex items-center justify-center gap-2" },
+                                                                        _react2.default.createElement('span', null, record.type || "-"),
+                                                                        _react2.default.createElement('button', {
+                                                                            onClick: () => copyToClipboard(record.type || "-", `type-${idx}`),
+                                                                            className: "text-gray-500 hover:text-pink-600"
+                                                                        },
+                                                                            copied[`type-${idx}`]
+                                                                                ? _react2.default.createElement(_lucidereact.Check, { className: "w-4 h-4" })
+                                                                                : _react2.default.createElement(_lucidereact.Copy, { className: "w-4 h-4" })
+                                                                        )
+                                                                    )
+                                                                ),
+
+                                                                // Value
+                                                                _react2.default.createElement('td', { className: "px-4 py-2 border font-mono text-sm" },
+                                                                    _react2.default.createElement('div', { className: "flex items-center gap-2" },
+                                                                        _react2.default.createElement('span', { className: "break-all" }, record.value),
+                                                                        _react2.default.createElement('button', {
+                                                                            onClick: () => copyToClipboard(record.value, `value-${idx}`),
+                                                                            className: "text-gray-500 hover:text-pink-600"
+                                                                        },
+                                                                            copied[`value-${idx}`]
+                                                                                ? _react2.default.createElement(_lucidereact.Check, { className: "w-4 h-4" })
+                                                                                : _react2.default.createElement(_lucidereact.Copy, { className: "w-4 h-4" })
+                                                                        )
+                                                                    )
+                                                                ),
+
+                                                                // Priority
+                                                                _react2.default.createElement('td', { className: "px-4 py-2 border font-mono text-sm text-center" },
+                                                                    _react2.default.createElement('div', { className: "flex items-center justify-center gap-2" },
+                                                                        _react2.default.createElement('span', null, record.priority || "-"),
+                                                                        _react2.default.createElement('button', {
+                                                                            onClick: () => copyToClipboard(record.priority || "-", `priority-${idx}`),
+                                                                            className: "text-gray-500 hover:text-pink-600"
+                                                                        },
+                                                                            copied[`priority-${idx}`]
+                                                                                ? _react2.default.createElement(_lucidereact.Check, { className: "w-4 h-4" })
+                                                                                : _react2.default.createElement(_lucidereact.Copy, { className: "w-4 h-4" })
+                                                                        )
+                                                                    )
+                                                                )
+                                                            )
+                                                        )
+                                                    )
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        ),
+
+                   
+                    )
+                )
+            )
+        );
+    }
+
+    exports.default = SSLTool;
+</script>
+<script type="text/javascript">
+    var gk_isXlsx = false;
+    var gk_xlsxFileLookup = {};
+    var gk_fileData = {};
+    function filledCell(cell) {
+      return cell !== '' && cell != null;
+    }
+    function loadFileData(filename) {
+    if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+        try {
+            var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+            var firstSheetName = workbook.SheetNames[0];
+            var worksheet = workbook.Sheets[firstSheetName];
+
+            var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+            var filteredData = jsonData.filter(row => row.some(filledCell));
+
+            var headerRowIndex = filteredData.findIndex((row, index) =>
+              row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+            );
+            if (headerRowIndex === -1 || headerRowIndex > 25) {
+              headerRowIndex = 0;
+            }
+
+            var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex));
+            csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+            return csv;
+        } catch (e) {
+            console.error(e);
+            return "";
+        }
+    }
+    return gk_fileData[filename] || "";
+    }
+</script>
+<script src="https://puc.poecdn.net/authenticated_preview_page/syncedState.bd4eeeb8e8e02052ee92.js"></script>
+</head>
+<body>
+<div id="preview-app"></div>
+</body>
+</html>
