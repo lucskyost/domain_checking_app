@@ -74,7 +74,6 @@ block-all-mixed-content;">
 
     function SSLTool() {
 
-        const forge = window.forge;
         // PFX Convert states
         const [pfxPrivateKey, setPfxPrivateKey] = _react.useState.call(void 0, '');
         const [pfxCertificate, setPfxCertificate] = _react.useState.call(void 0, '');
@@ -125,6 +124,7 @@ block-all-mixed-content;">
     ? "http://localhost:3001"
     : window.location.origin;
 
+
         // Function to clean domain input (xóa http/https prefix)
         const cleanDomainInput = (input) => {
             if (!input) return '';
@@ -142,7 +142,7 @@ block-all-mixed-content;">
             
             return cleaned;
         };
-        
+        const forge = window.forge;
         // Function to generate SSL search link
         const generateDomainSearchLink = (domain) => {
             if (!domain) return '';
