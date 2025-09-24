@@ -74,30 +74,30 @@ block-all-mixed-content;">
 
     function SSLTool() {
 
-    const [forgeLoaded, setForgeLoaded] = _react.useState(false);
+        const [forgeLoaded, setForgeLoaded] = _react.useState(false);
 
-        _react.useEffect(() => {
-            if (window.forge) {
-                setForgeLoaded(true);
-                return;
+            _react.useEffect(() => {
+                if (window.forge) {
+                    setForgeLoaded(true);
+                    return;
+                }
+                const script = document.createElement('script');
+                script.src = 'https://cdn.jsdelivr.net/npm/node-forge@1.3.1/dist/forge.min.js';
+                script.defer = true;
+                script.onload = () => {
+                    console.log('node-forge loaded:', window.forge);
+                    setForgeLoaded(true);
+                };
+                script.onerror = () => {
+                    console.error('Lỗi tải node-forge từ CDN');
+                    setPfxError('Lỗi: Không thể tải node-forge.');
+                };
+                document.head.appendChild(script);
+            }, []);
+
+            if (!forgeLoaded) {
+                return _react2.default.createElement('div', { className: 'text-red-600 p-6' }, 'Đang tải node-forge... Vui lòng chờ.');
             }
-            const script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/npm/node-forge@1.3.1/dist/forge.min.js';
-            script.defer = true;
-            script.onload = () => {
-                console.log('node-forge loaded:', window.forge);
-                setForgeLoaded(true);
-            };
-            script.onerror = () => {
-                console.error('Lỗi tải node-forge từ CDN');
-                setPfxError('Lỗi: Không thể tải node-forge.');
-            };
-            document.head.appendChild(script);
-        }, []);
-
-        if (!forgeLoaded) {
-            return _react2.default.createElement('div', { className: 'text-red-600 p-6' }, 'Đang tải node-forge... Vui lòng chờ.');
-        }
 
         const forge = window.forge;
         console.log('window.forge:', window.forge);
