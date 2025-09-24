@@ -70,10 +70,12 @@ block-all-mixed-content;">
     var _react2 = _interopRequireDefault(_react);
     var _lucidereact = require('lucide-react');
     // var forge = require('node-forge');
-    const forge = window.forge;
+    
 
     function SSLTool() {
-        
+
+        const forge = window.forge;
+        console.log('window.forge:', window.forge);
         const [activeTab, setActiveTab] = _react.useState.call(void 0, 'domain');
         const [domainInput, setDomainInput] = _react.useState.call(void 0, '');
         const [domainInfo, setDomainInfo] = _react.useState.call(void 0, null);
